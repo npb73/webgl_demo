@@ -1,0 +1,24 @@
+// Шаг клетки: вся вертикальная ритмика кратна ему, чтобы текст «лежал» на линиях.
+$cell: 28px;
+
+$paper: #fdfcf6;
+$grid-line: #d9e5f0;
+$ink: #1f3b8c;
+$ink-soft: #4a64b0;
+$pencil: #5d636c;
+$red: #d0453a;
+$marker: rgba(255, 226, 77, 0.6);
+$sticky: #fff4a3;
+$sticky-shadow: rgba(60, 50, 10, 0.18);
+$tape: rgba(232, 214, 160, 0.72);
+$code-bg: rgba(255, 255, 255, 0.82);
+
+$font-hand: var(--font-hand), "Comic Sans MS", cursive;
+$font-body: var(--font-body), "Comic Sans MS", cursive;
+$font-code: var(--font-code), ui-monospace, monospace;
+
+$bp-mobile: 640px;
+$bp-wide: 1080px;
+
+// Ширина колонки полей слева от красной линии.
+$margin-width: $cell * 4;

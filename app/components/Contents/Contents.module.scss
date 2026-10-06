@@ -1,0 +1,57 @@
+@use "../../styles/tokens" as *;
+@use "../../styles/mixins" as *;
+
+.contents {
+  max-width: 34em;
+  padding: $cell 0;
+}
+
+.title {
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: $cell * 1.5;
+  color: $pencil;
+}
+
+.list {
+  margin-top: $cell * 0.5;
+}
+
+.item {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.number {
+  min-width: 1.4em;
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: 24px;
+  color: $red;
+}
+
+.link {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline wavy $red 1.5px;
+    text-underline-offset: 5px;
+  }
+}
+
+// Точки-«лидеры» от названия до даты, как в оглавлении книги.
+.leader {
+  flex: 1;
+  min-width: $cell;
+  border-bottom: 2px dotted rgba($ink, 0.35);
+  transform: translateY(-6px);
+}
+
+.date {
+  font-family: $font-hand;
+  font-size: 22px;
+  color: $pencil;
+  white-space: nowrap;
+}

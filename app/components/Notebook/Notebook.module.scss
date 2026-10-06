@@ -1,0 +1,51 @@
+@use "../../styles/tokens" as *;
+@use "../../styles/mixins" as *;
+
+.sheet {
+  position: relative;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: ($cell * 3) ($cell * 2) ($cell * 3) ($margin-width + $cell);
+
+  // Красная линия полей, как в школьной тетради.
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: $margin-width;
+    width: 2px;
+    background: $red;
+    opacity: 0.55;
+    box-shadow: 4px 0 0 rgba($red, 0.25);
+  }
+
+  @include mobile {
+    padding: ($cell * 2) 16px ($cell * 2) ($cell + 16px);
+
+    &::before {
+      left: $cell * 0.5;
+    }
+  }
+}
+
+// Отверстия от пружины — только там, где есть место слева от листа.
+.holes {
+  display: none;
+
+  @include wide {
+    display: block;
+    position: absolute;
+    top: $cell;
+    bottom: $cell;
+    left: -$cell * 1.5;
+    width: $cell;
+    background: radial-gradient(
+        circle at center,
+        #e6e2d4 0 7px,
+        rgba(0, 0, 0, 0.12) 7px 8px,
+        transparent 9px
+      )
+      0 0 / #{$cell} #{$cell * 2} repeat-y;
+  }
+}

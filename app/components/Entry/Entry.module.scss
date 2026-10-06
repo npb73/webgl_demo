@@ -1,0 +1,63 @@
+@use "../../styles/tokens" as *;
+@use "../../styles/mixins" as *;
+
+.entry {
+  padding-top: $cell * 2;
+
+  & + & {
+    margin-top: $cell * 2;
+  }
+}
+
+.header {
+  position: relative;
+  margin-bottom: $cell;
+}
+
+// Номер записи и дата живут на полях слева от красной линии.
+.margin {
+  position: absolute;
+  top: $cell * 0.5;
+  right: calc(100% + #{$cell * 1.25});
+  width: $margin-width - $cell;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: $font-hand;
+  line-height: $cell;
+  text-align: right;
+
+  @include mobile {
+    position: static;
+    flex-direction: row;
+    gap: 12px;
+    width: auto;
+  }
+}
+
+.number {
+  font-size: 28px;
+  font-weight: 700;
+  color: $red;
+}
+
+.date {
+  font-size: 20px;
+  color: $pencil;
+}
+
+.title {
+  @include hand-heading(48px);
+  display: inline-block;
+  @include scribble-underline($red, 3px);
+
+  @include mobile {
+    font-size: 40px;
+    line-height: $cell * 1.5;
+  }
+}
+
+.body {
+  max-width: 38em;
+  display: flow-root;
+}

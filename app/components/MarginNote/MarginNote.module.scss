@@ -1,0 +1,46 @@
+@use "../../styles/tokens" as *;
+@use "../../styles/mixins" as *;
+
+.note {
+  position: relative;
+  max-width: 420px;
+  margin: $cell 0;
+  padding: ($cell * 0.5) $cell;
+  background: $sticky;
+  color: $ink;
+  box-shadow:
+    0 1px 1px $sticky-shadow,
+    6px 8px 14px -8px $sticky-shadow;
+  transform: rotate(-1.2deg);
+
+  &:nth-of-type(even) {
+    transform: rotate(1deg);
+  }
+}
+
+.inline {
+  margin-left: $cell * 0.5;
+}
+
+.right {
+  @media (min-width: 900px) {
+    float: right;
+    width: 260px;
+    margin: 0 (-$cell) $cell ($cell * 1.5);
+  }
+}
+
+.title {
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: 26px;
+  color: $red;
+}
+
+.text {
+  font-size: 18px;
+
+  p + p {
+    margin-top: $cell * 0.5;
+  }
+}

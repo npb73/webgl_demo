@@ -1,0 +1,107 @@
+@use "sass:list";
+@use "sass:math";
+@use "tokens" as *;
+
+@mixin mobile {
+  @media (max-width: $bp-mobile) {
+    @content;
+  }
+}
+
+@mixin wide {
+  @media (min-width: $bp-wide) {
+    @content;
+  }
+}
+
+// Выделение текстовым маркером: закрашивает нижнюю часть строки.
+@mixin marker($color: $marker) {
+  background: linear-gradient(
+    176deg,
+    transparent 48%,
+    $color 50%,
+    $color 88%,
+    transparent 90%
+  );
+  padding: 0 0.15em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+// Подчёркивание «от руки»: слегка неровная линия под элементом.
+@mixin scribble-underline($color: $red, $thickness: 3px) {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: -4px;
+    right: -8px;
+    bottom: 2px;
+    height: $thickness;
+    background: $color;
+    border-radius: 60% 40% 70% 30% / 100%;
+    transform: rotate(-0.8deg);
+    opacity: 0.85;
+  }
+}
+
+// Кусок скотча, которым листок «приклеен» к странице.
+@mixin tape($width: 96px, $rotate: -3deg) {
+  &::before {
+    content: "";
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    width: $width;
+    height: 24px;
+    background: $tape;
+    transform: translateX(-50%) rotate($rotate);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  }
+}
+
+@mixin hand-heading($size) {
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: $size;
+  line-height: $cell * 2;
+  color: $ink;
+}
+
+@function _fract($n) {
+  @return $n - math.floor($n);
+}
+
+// Детерминированный «шум»: одинаковая форма при каждой сборке.
+@function _jitter($seed, $depth) {
+  @return math.round(_fract(math.sin($seed * 12.9898) * 43758.5453) * $depth * 10) * 0.1;
+}
+
+// clip-path с рваными краями, как у листа, вырванного из тетради.
+@function torn-polygon($steps: 28, $depth: 8px) {
+  $points: ();
+
+  @for $i from 0 to $steps {
+    $points: list.append($points, math.percentage(math.div($i, $steps)) _jitter($i, $depth), comma);
+  }
+  @for $i from 0 to $steps {
+    $points: list.append(
+      $points,
+      calc(100% - #{_jitter($i + 101, $depth)}) math.percentage(math.div($i, $steps)),
+      comma
+    );
+  }
+  @for $i from 0 to $steps {
+    $points: list.append(
+      $points,
+      math.percentage(1 - math.div($i, $steps)) calc(100% - #{_jitter($i + 211, $depth)}),
+      comma
+    );
+  }
+  @for $i from 0 to $steps {
+    $points: list.append($points, _jitter($i + 307, $depth) math.percentage(1 - math.div($i, $steps)), comma);
+  }
+
+  @return polygon($points);
+}

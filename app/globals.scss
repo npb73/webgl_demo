@@ -1,0 +1,96 @@
+@use "./styles/tokens" as *;
+@use "./styles/mixins" as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  color-scheme: light;
+  scroll-behavior: smooth;
+  scroll-padding-top: $cell * 2;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: $font-body;
+  font-size: 20px;
+  line-height: $cell;
+  color: $ink;
+  background-color: $paper;
+  background-image:
+    linear-gradient($grid-line 1px, transparent 1px),
+    linear-gradient(90deg, $grid-line 1px, transparent 1px);
+  background-size: $cell $cell;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+p + p {
+  margin-top: $cell;
+}
+
+a {
+  color: $ink;
+  text-decoration: underline;
+  text-decoration-color: $red;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+
+  &:hover {
+    color: $red;
+  }
+
+  &:focus-visible {
+    outline: 2px dashed $red;
+    outline-offset: 3px;
+  }
+}
+
+strong {
+  font-weight: inherit;
+  @include marker;
+}
+
+em {
+  font-style: normal;
+  color: $red;
+}
+
+code {
+  font-family: $font-code;
+  font-size: 0.78em;
+  font-variant-ligatures: none;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(31, 59, 140, 0.07);
+  white-space: nowrap;
+}
+
+pre code {
+  font-size: inherit;
+  padding: 0;
+  background: none;
+  white-space: pre;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+::selection {
+  background: $marker;
+}

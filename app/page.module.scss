@@ -1,0 +1,225 @@
+@use "./styles/tokens" as *;
+@use "./styles/mixins" as *;
+
+// Таблица сравнения — линии «от руки» поверх клетки.
+.tableWrap {
+  clear: both;
+  margin-top: $cell * 1.5;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  font-size: 18px;
+
+  th,
+  td {
+    padding: ($cell * 0.25) 12px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1.5px solid rgba($ink, 0.3);
+  }
+
+  thead th {
+    font-family: $font-hand;
+    font-weight: 700;
+    font-size: 22px;
+    color: $pencil;
+    border-bottom: 2px solid $ink;
+  }
+
+  tbody th {
+    font-family: $font-hand;
+    font-weight: 700;
+    font-size: 24px;
+    white-space: nowrap;
+  }
+}
+
+.tableCaption {
+  caption-side: top;
+  padding-bottom: $cell * 0.25;
+  font-family: $font-hand;
+  font-size: 26px;
+  text-align: left;
+  color: $red;
+}
+
+.current {
+  th,
+  td {
+    background: rgba($marker, 0.45);
+  }
+}
+
+// Словарь: термин слева, пояснение справа.
+.glossary {
+  margin-top: $cell;
+}
+
+.glossaryItem {
+  display: grid;
+  grid-template-columns: 7em 1fr;
+  gap: 0 $cell * 0.5;
+
+  & + & {
+    margin-top: $cell * 0.5;
+  }
+
+  dt code {
+    font-size: 15px;
+    color: $red;
+    background: none;
+    padding: 0;
+  }
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+}
+
+.step {
+  margin-top: $cell * 1.5;
+}
+
+.stepTitle {
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: $cell * 1.5;
+  color: $ink;
+}
+
+.stepNumber {
+  display: inline-block;
+  margin-right: 12px;
+  padding: 0 10px;
+  font-size: 24px;
+  line-height: $cell;
+  color: $red;
+  border: 2px solid $red;
+  border-radius: 50% 45% 55% 48% / 60% 50% 55% 45%;
+  transform: rotate(-3deg);
+}
+
+.pitfalls {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: $cell;
+  margin-top: $cell;
+}
+
+.pitfall {
+  position: relative;
+  padding-left: $cell * 1.25;
+
+  &::before {
+    content: "!";
+    position: absolute;
+    top: 4px;
+    left: 0;
+    width: 22px;
+    height: 22px;
+    font-family: $font-hand;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 20px;
+    text-align: center;
+    color: $red;
+    border: 2px solid $red;
+    border-radius: 50%;
+  }
+
+  p {
+    font-size: 18px;
+  }
+}
+
+.pitfallTitle {
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: 26px;
+  line-height: $cell * 1.25;
+}
+
+.demoHint {
+  margin-top: $cell;
+  font-family: $font-hand;
+  font-size: 24px;
+  color: $pencil;
+}
+
+.aside {
+  margin-top: $cell * 1.5;
+  font-family: $font-hand;
+  font-size: 24px;
+  color: $pencil;
+}
+
+.libraries {
+  margin-top: $cell;
+}
+
+.library {
+  display: grid;
+  grid-template-columns: 10em 1fr;
+  gap: 0 $cell * 0.5;
+
+  & + & {
+    margin-top: $cell * 0.5;
+  }
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+}
+
+.libraryName {
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: 26px;
+}
+
+.libraryText {
+  font-size: 18px;
+}
+
+// Список чтения с нарисованными чекбоксами.
+.reading {
+  margin-top: $cell;
+}
+
+.readingItem {
+  position: relative;
+  padding-left: $cell * 1.25;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    border: 2px solid $ink;
+    border-radius: 2px 4px 3px 2px;
+    transform: rotate(-3deg);
+  }
+
+  // Первые пункты уже «прочитаны».
+  &:nth-child(-n + 2)::after {
+    content: "✓";
+    position: absolute;
+    top: -6px;
+    left: 3px;
+    font-family: $font-hand;
+    font-weight: 700;
+    font-size: 28px;
+    color: $red;
+  }
+}
+
+.readingNote {
+  color: $pencil;
+}

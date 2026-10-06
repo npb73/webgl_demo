@@ -1,0 +1,28 @@
+@use "../../styles/tokens" as *;
+@use "../../styles/mixins" as *;
+
+.footer {
+  margin-top: $cell * 4;
+  padding-top: $cell * 2;
+  border-top: 2px dashed rgba($ink, 0.25);
+}
+
+.next {
+  @include hand-heading(44px);
+  color: $red;
+  transform: rotate(-1.5deg);
+  transform-origin: left center;
+}
+
+.text {
+  max-width: 34em;
+  margin-top: $cell * 0.5;
+}
+
+.signature {
+  margin-top: $cell * 2;
+  font-family: $font-hand;
+  font-size: 22px;
+  color: $pencil;
+  text-align: right;
+}

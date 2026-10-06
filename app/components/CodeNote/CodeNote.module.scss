@@ -1,0 +1,38 @@
+@use "../../styles/tokens" as *;
+@use "../../styles/mixins" as *;
+
+// Листок с кодом, приклеенный скотчем поверх клетки.
+.note {
+  position: relative;
+  margin: ($cell * 1.5) 0 $cell;
+  padding: $cell ($cell * 0.75) ($cell * 0.75);
+  background: $code-bg;
+  border: 1px solid rgba($ink, 0.12);
+  box-shadow: 4px 6px 0 -2px rgba($ink, 0.06);
+  transform: rotate(-0.3deg);
+  @include tape;
+}
+
+.filename {
+  position: absolute;
+  top: 2px;
+  right: $cell * 0.5;
+  font-family: $font-hand;
+  font-size: 20px;
+  color: $pencil;
+}
+
+.pre {
+  overflow-x: auto;
+  font-family: $font-code;
+  font-size: 15px;
+  line-height: 24px;
+  color: #1c2440;
+  tab-size: 2;
+  font-variant-ligatures: none;
+
+  @include mobile {
+    font-size: 12.5px;
+    line-height: 20px;
+  }
+}
