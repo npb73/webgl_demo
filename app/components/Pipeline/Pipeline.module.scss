@@ -20,9 +20,9 @@
   align-items: baseline;
   gap: 0 12px;
   padding: 2px 14px;
-  border: 2px solid rgba($ink, 0.55);
+  border: 2px solid tint(ink, 0.55);
   border-radius: 14px 6px 12px 8px / 8px 12px 6px 14px;
-  background: rgba($paper, 0.85);
+  background: tint(paper, 0.85);
 
   // Стрелка к следующему этапу.
   &:not(:last-child)::after {
@@ -31,7 +31,7 @@
     left: $cell;
     bottom: -$cell - 2px;
     font-family: $font-hand;
-    font-size: 24px;
+    font-size: 30px;
     line-height: $cell;
     color: $pencil;
   }
@@ -60,19 +60,19 @@
 .name {
   font-family: $font-hand;
   font-weight: 700;
-  font-size: 24px;
+  font-size: 30px;
   line-height: $cell;
 }
 
 .hint {
-  font-size: 16px;
-  line-height: 20px;
+  font-size: 20px;
+  line-height: 24px;
   color: $pencil;
 }
 
 .caption {
   margin-top: $cell * 0.5;
   font-family: $font-hand;
-  font-size: 22px;
+  font-size: 26px;
   color: $red;
 }

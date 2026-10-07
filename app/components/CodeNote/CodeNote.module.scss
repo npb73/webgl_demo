@@ -7,8 +7,8 @@
   margin: ($cell * 1.5) 0 $cell;
   padding: $cell ($cell * 0.75) ($cell * 0.75);
   background: $code-bg;
-  border: 1px solid rgba($ink, 0.12);
-  box-shadow: 4px 6px 0 -2px rgba($ink, 0.06);
+  border: 1px solid tint(ink, 0.12);
+  box-shadow: 4px 6px 0 -2px tint(ink, 0.06);
   transform: rotate(-0.3deg);
   @include tape;
 }
@@ -18,21 +18,21 @@
   top: 2px;
   right: $cell * 0.5;
   font-family: $font-hand;
-  font-size: 20px;
+  font-size: 24px;
   color: $pencil;
 }
 
 .pre {
   overflow-x: auto;
   font-family: $font-code;
-  font-size: 15px;
-  line-height: 24px;
-  color: #1c2440;
+  font-size: 19px;
+  line-height: 30px;
+  color: tint(code-ink);
   tab-size: 2;
   font-variant-ligatures: none;
 
   @include mobile {
-    font-size: 12.5px;
+    font-size: 13px;
     line-height: 20px;
   }
 }

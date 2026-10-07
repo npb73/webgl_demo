@@ -1,11 +1,21 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
-import { PaperWindow } from "../PaperWindow/PaperWindow";
-import { ShaderCanvas } from "./ShaderCanvas";
-import styles from "./ShaderDemo.module.scss";
+import { useCallback, useRef, useState, type ReactNode } from "react";
+import { DemoButton } from "../DemoButton/DemoButton";
+import { PaperWindow, type WindowEffect } from "../PaperWindow/PaperWindow";
 
-export function ShaderDemo() {
+type ShaderDemoProps = {
+  label: string;
+  windowTitle: string;
+  /** Что рисует окно, когда страница — сцена WebGL. */
+  effect: WindowEffect;
+  /** Окно без наклона — нужно линзе, чтобы совпадать со страницей под ней. */
+  flat?: boolean;
+  /** Содержимое окна в DOM-режиме: монтируется только пока окно открыто. */
+  children: ReactNode;
+};
+
+export function ShaderDemo({ label, windowTitle, effect, flat, children }: ShaderDemoProps) {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -16,20 +26,13 @@ export function ShaderDemo() {
 
   return (
     <>
-      <button
-        ref={buttonRef}
-        type="button"
-        className={styles.button}
-        onClick={() => setOpen(true)}
-        aria-haspopup="dialog"
-      >
-        <span className={styles.play} aria-hidden="true" />
-        Запустить шейдер
-      </button>
+      <DemoButton ref={buttonRef} onClick={() => setOpen(true)} aria-haspopup="dialog">
+        {label}
+      </DemoButton>
 
       {open && (
-        <PaperWindow title="first-shader.exe" onClose={close}>
-          <ShaderCanvas />
+        <PaperWindow title={windowTitle} effect={effect} flat={flat} onClose={close}>
+          {children}
         </PaperWindow>
       )}
     </>

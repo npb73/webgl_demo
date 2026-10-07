@@ -1,28 +1,34 @@
 @use "../../styles/tokens" as *;
 @use "../../styles/mixins" as *;
 
+// Последний слайд.
 .footer {
-  margin-top: $cell * 4;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 70vh;
   padding-top: $cell * 2;
-  border-top: 2px dashed rgba($ink, 0.25);
+  border-top: 2px dashed tint(ink, 0.25);
 }
 
 .next {
-  @include hand-heading(44px);
+  @include hand-heading(72px);
   color: $red;
   transform: rotate(-1.5deg);
   transform-origin: left center;
 }
 
 .text {
-  max-width: 34em;
+  max-width: 30em;
   margin-top: $cell * 0.5;
+  font-size: 30px;
+  line-height: $cell * 1.25;
 }
 
 .signature {
   margin-top: $cell * 2;
   font-family: $font-hand;
-  font-size: 22px;
+  font-size: 26px;
   color: $pencil;
   text-align: right;
 }

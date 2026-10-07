@@ -3,7 +3,7 @@
 
 .note {
   position: relative;
-  max-width: 420px;
+  max-width: 460px;
   margin: $cell 0;
   padding: ($cell * 0.5) $cell;
   background: $sticky;
@@ -25,7 +25,7 @@
 .right {
   @media (min-width: 900px) {
     float: right;
-    width: 260px;
+    width: 320px;
     margin: 0 (-$cell) $cell ($cell * 1.5);
   }
 }
@@ -33,12 +33,18 @@
 .title {
   font-family: $font-hand;
   font-weight: 700;
-  font-size: 26px;
+  font-size: 32px;
   color: $red;
 }
 
 .text {
-  font-size: 18px;
+  font-size: $text-small;
+
+  // Длинные адреса и имена не вылезают за стикер.
+  code {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
 
   p + p {
     margin-top: $cell * 0.5;

@@ -1,38 +1,44 @@
 @use "../../styles/tokens" as *;
 @use "../../styles/mixins" as *;
 
-.backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  background: rgba($paper, 0.45);
-  backdrop-filter: blur(1.5px);
-}
-
 // Тень вешаем на обёртку: clip-path у листа обрезал бы box-shadow.
+// Окно прозрачно для мыши: клики, наведение и выделение текста проходят
+// к странице под ним. Ловит указатель только заголовок (см. .titleBar).
 .window {
-  position: absolute;
+  pointer-events: none;
+  position: fixed;
   top: 0;
   left: 0;
+  z-index: 1000;
   width: min(560px, calc(100vw - 32px));
-  filter: drop-shadow(0 2px 2px rgba(30, 40, 80, 0.18))
-    drop-shadow(10px 16px 18px rgba(30, 40, 80, 0.16));
+  filter: drop-shadow(0 2px 2px tint(shadow, 0.18))
+    drop-shadow(10px 16px 18px tint(shadow, 0.16));
   will-change: transform;
+
+  &:focus {
+    outline: none;
+  }
 }
 
 .paper {
-  padding: 14px 18px 22px;
+  padding: 8px 10px 12px;
   background-color: $paper;
   background-image:
     linear-gradient($grid-line 1px, transparent 1px),
     linear-gradient(90deg, $grid-line 1px, transparent 1px);
-  background-size: $cell $cell;
-  clip-path: torn-polygon(28, 8px);
+  background-size: $window-cell $window-cell;
+  clip-path: torn-polygon(28, 6px);
   transform: rotate(-0.6deg);
   transition: transform 0.15s ease;
 
   .dragging & {
     transform: rotate(0.4deg) scale(1.01);
+  }
+
+  // Плоское окно: содержимое должно совпадать с пикселями страницы под ним.
+  .flat &,
+  .flat.dragging & {
+    transform: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -46,15 +52,16 @@
   align-items: center;
   gap: 10px;
   min-height: 40px;
-  margin-top: 4px;
+  margin-top: 2px;
   padding: 2px 6px 2px 10px;
-  border: 2px solid $ink;
+  border: 1.5px solid $ink;
   border-radius: 6px 10px 4px 8px / 8px 4px 10px 6px;
   background: repeating-linear-gradient(
     -55deg,
-    rgba($ink, 0.16) 0 2px,
+    tint(ink, 0.16) 0 2px,
     transparent 2px 7px
   );
+  pointer-events: auto;
   cursor: grab;
   touch-action: none;
   user-select: none;
@@ -116,5 +123,93 @@
 }
 
 .content {
-  margin-top: 14px;
+  margin-top: 8px;
+}
+
+// --- Окно как слой сцены WebGL ------------------------------------------
+// Поля вокруг окна вмещают тень: она рисуется в текстуру вместе с рамкой.
+// Сами поля прозрачны для мыши, чтобы не перекрывать страницу.
+.shell {
+  position: relative;
+  width: fit-content;
+  padding: 40px;
+  pointer-events: none;
+}
+
+// Положение, наклон и «приподнимание» задаёт сцена, а не CSS.
+.staged {
+  position: relative;
+  top: auto;
+  left: auto;
+  z-index: auto;
+  will-change: auto;
+
+  .paper {
+    transform: none;
+    transition: none;
+  }
+}
+
+.stageContent {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  outline: 1.5px solid $ink;
+  border-radius: 3px;
+}
+
+// --- Изменение размера ------------------------------------------------------
+// Окну задали размер: лист тянется на всю высоту, а картинка — на остаток
+// под заголовком, без фиксированных пропорций 4:3.
+.sized {
+  .paper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .content > * {
+    flex: 1;
+    min-height: 0;
+    height: auto;
+    aspect-ratio: auto;
+  }
+}
+
+// Уголок как в Windows: штриховка карандашом в правом нижнем углу.
+.grip {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0 4px,
+    tint(ink, 0.75) 4px 5.5px
+  );
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  pointer-events: auto;
+  touch-action: none;
+  cursor: nwse-resize;
+
+  &:focus-visible {
+    clip-path: none;
+    outline: 2px dashed $red;
+    outline-offset: 2px;
+  }
+}
+
+// Пока окно тянут, курсор не мигает между «стрелкой» и «рукой».
+.resizing,
+.resizing * {
+  cursor: nwse-resize;
 }

@@ -1,70 +1,10 @@
 // Самый первый шейдер на чистом WebGL 2 — без библиотек.
-// GLSL-исходники лежат в first-shader.wasm: модуль экспортирует memory
-// и пары функций *_ptr / *_len, по которым мы читаем строки.
+// GLSL-исходники лежат в first-shader.wasm (см. lib/webgl/shader-wasm.js).
+
+import { createProgram } from "../../lib/webgl/program";
+import { loadShaderSources } from "../../lib/webgl/shader-wasm";
 
 const WASM_URL = "/shaders/first-shader.wasm";
-
-/** @type {Promise<{ vertex: string, fragment: string }> | null} */
-let sourcesPromise = null;
-
-function loadSources() {
-  sourcesPromise ??= fetch(WASM_URL)
-    .then((response) => {
-      if (!response.ok) throw new Error(`Не удалось загрузить ${WASM_URL}`);
-      return response.arrayBuffer();
-    })
-    .then((bytes) => WebAssembly.instantiate(bytes))
-    .then(({ instance }) => {
-      const { memory, vertex_ptr, vertex_len, fragment_ptr, fragment_len } =
-        instance.exports;
-      const decoder = new TextDecoder();
-      const read = (ptr, len) =>
-        decoder.decode(new Uint8Array(memory.buffer, ptr, len));
-
-      return {
-        vertex: read(vertex_ptr(), vertex_len()),
-        fragment: read(fragment_ptr(), fragment_len()),
-      };
-    })
-    .catch((error) => {
-      sourcesPromise = null;
-      throw error;
-    });
-
-  return sourcesPromise;
-}
-
-function compile(gl, type, source) {
-  const shader = gl.createShader(type);
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
-
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    const log = gl.getShaderInfoLog(shader);
-    gl.deleteShader(shader);
-    throw new Error(log ?? "Ошибка компиляции шейдера");
-  }
-  return shader;
-}
-
-function createProgram(gl, vertexSource, fragmentSource) {
-  const vertexShader = compile(gl, gl.VERTEX_SHADER, vertexSource);
-  const fragmentShader = compile(gl, gl.FRAGMENT_SHADER, fragmentSource);
-  const program = gl.createProgram();
-
-  gl.attachShader(program, vertexShader);
-  gl.attachShader(program, fragmentShader);
-  gl.linkProgram(program);
-  gl.deleteShader(vertexShader);
-  gl.deleteShader(fragmentShader);
-
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    const log = gl.getProgramInfoLog(program);
-    gl.deleteProgram(program);
-    throw new Error(log ?? "Ошибка линковки программы");
-  }
-  return program;
-}
 
 /**
  * Запускает шейдер на canvas. Возвращает функцию остановки,
@@ -76,7 +16,7 @@ function createProgram(gl, vertexSource, fragmentSource) {
  * @returns {Promise<() => void>}
  */
 export async function startFirstShader(canvas, signal) {
-  const { vertex, fragment } = await loadSources();
+  const { vertex, fragment } = await loadShaderSources(WASM_URL);
   if (signal?.aborted) return () => {};
 
   const gl = canvas.getContext("webgl2");

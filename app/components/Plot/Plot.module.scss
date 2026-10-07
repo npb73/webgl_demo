@@ -1,0 +1,30 @@
+@use "../../styles/tokens" as *;
+
+// Окна пропускают мышь сквозь себя, но график должен её ловить:
+// колесо — зум, перетаскивание — сдвиг.
+.plot,
+.interactive {
+  pointer-events: auto;
+  touch-action: none;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.plot {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border: 1.5px solid $ink;
+  border-radius: 4px 8px 3px 6px;
+  background: $paper;
+}
+
+.error {
+  padding: $window-cell 0;
+  font-family: $font-hand;
+  font-size: 24px;
+  color: $red;
+}

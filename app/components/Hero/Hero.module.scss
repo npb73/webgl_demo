@@ -1,13 +1,19 @@
 @use "../../styles/tokens" as *;
 @use "../../styles/mixins" as *;
 
+// Титульный слайд: на весь экран, текст по центру по вертикали.
 .hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100svh;
   padding-bottom: $cell * 2;
 }
 
 .kicker {
   font-family: $font-hand;
-  font-size: 24px;
+  font-size: 30px;
   color: $pencil;
 }
 
@@ -15,8 +21,8 @@
   margin-top: $cell;
   font-family: $font-hand;
   font-weight: 700;
-  font-size: clamp(56px, 11vw, 96px);
-  line-height: $cell * 3;
+  font-size: clamp(64px, 12vw, 172px);
+  line-height: $cell * 5;
   color: $ink;
   letter-spacing: -0.01em;
 
@@ -29,19 +35,25 @@
   display: inline-block;
   color: $red;
   transform: rotate(-2deg);
-  @include scribble-underline($ink, 4px);
+  @include scribble-underline($ink, 6px);
 }
 
 .lead {
-  max-width: 34em;
+  max-width: 26em;
   margin-top: $cell;
-  font-size: 22px;
+  font-size: 34px;
+  line-height: $cell * 1.25;
+
+  @include mobile {
+    font-size: 23px;
+    line-height: $cell;
+  }
 }
 
 .meta {
   margin-top: $cell * 2;
   font-family: $font-hand;
-  font-size: 24px;
+  font-size: 28px;
 
   div {
     display: flex;
@@ -56,7 +68,7 @@
   dd {
     flex: 1 1 200px;
     max-width: 22em;
-    border-bottom: 1px solid rgba($ink, 0.45);
+    border-bottom: 1px solid tint(ink, 0.45);
     line-height: $cell - 1px;
   }
 }

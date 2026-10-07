@@ -1,7 +1,66 @@
 @use "./styles/tokens" as *;
 @use "./styles/mixins" as *;
 
-// Таблица сравнения — линии «от руки» поверх клетки.
+// --- Главная мысль слайда и пояснения к ней ---------------------------------
+
+.statement {
+  max-width: 18em;
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: 54px;
+  line-height: $cell * 2;
+  color: $ink;
+
+  @include mobile {
+    font-size: 34px;
+    line-height: $cell * 1.25;
+  }
+}
+
+.lead {
+  max-width: 30em;
+  margin-top: $cell;
+  font-size: 30px;
+  line-height: $cell * 1.25;
+
+  @include mobile {
+    font-size: 21px;
+    line-height: $cell;
+  }
+}
+
+// CPU против GPU: две карточки-стикера рядом.
+.versus {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: $cell;
+  max-width: 900px;
+  margin-top: $cell * 1.5;
+}
+
+.card {
+  padding: ($cell * 0.5) $cell ($cell * 0.75);
+  background: $sticky;
+  box-shadow:
+    0 1px 1px $sticky-shadow,
+    6px 8px 14px -8px $sticky-shadow;
+  transform: rotate(-1deg);
+
+  & + & {
+    transform: rotate(1.2deg);
+  }
+}
+
+.cardTitle {
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: 44px;
+  line-height: $cell * 1.5;
+  color: $red;
+}
+
+// --- Сравнение технологий ---------------------------------------------------
+
 .tableWrap {
   clear: both;
   margin-top: $cell * 1.5;
@@ -10,22 +69,21 @@
 
 .table {
   width: 100%;
-  min-width: 520px;
+  min-width: 560px;
   border-collapse: collapse;
-  font-size: 18px;
 
   th,
   td {
-    padding: ($cell * 0.25) 12px;
+    padding: ($cell * 0.25) 14px;
     text-align: left;
     vertical-align: top;
-    border-bottom: 1.5px solid rgba($ink, 0.3);
+    border-bottom: 1.5px solid tint(ink, 0.3);
   }
 
   thead th {
     font-family: $font-hand;
     font-weight: 700;
-    font-size: 22px;
+    font-size: 28px;
     color: $pencil;
     border-bottom: 2px solid $ink;
   }
@@ -33,28 +91,20 @@
   tbody th {
     font-family: $font-hand;
     font-weight: 700;
-    font-size: 24px;
+    font-size: 32px;
     white-space: nowrap;
   }
-}
-
-.tableCaption {
-  caption-side: top;
-  padding-bottom: $cell * 0.25;
-  font-family: $font-hand;
-  font-size: 26px;
-  text-align: left;
-  color: $red;
 }
 
 .current {
   th,
   td {
-    background: rgba($marker, 0.45);
+    background: tint(marker, 0.27);
   }
 }
 
-// Словарь: термин слева, пояснение справа.
+// --- Словарь через знакомые фронтендеру вещи ---------------------------------
+
 .glossary {
   margin-top: $cell;
 }
@@ -65,11 +115,11 @@
   gap: 0 $cell * 0.5;
 
   & + & {
-    margin-top: $cell * 0.5;
+    margin-top: $cell * 0.25;
   }
 
   dt code {
-    font-size: 15px;
+    font-size: 22px;
     color: $red;
     background: none;
     padding: 0;
@@ -80,92 +130,201 @@
   }
 }
 
-.step {
-  margin-top: $cell * 1.5;
+// --- Рецепт: шаг, подсказка, одна ключевая строка кода ----------------------
+
+.recipe {
+  margin-top: $cell;
 }
 
-.stepTitle {
+.recipeStep {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 $cell * 0.75;
+  align-items: start;
+
+  & + & {
+    margin-top: $cell * 0.75;
+  }
+}
+
+.recipeNumber {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
   font-family: $font-hand;
   font-weight: 700;
-  font-size: 32px;
-  line-height: $cell * 1.5;
-  color: $ink;
+  font-size: 34px;
+  color: $red;
+  border: 2.5px solid $red;
+  border-radius: 50% 45% 55% 48% / 60% 50% 55% 45%;
+  transform: rotate(-4deg);
 }
 
-.stepNumber {
-  display: inline-block;
-  margin-right: 12px;
-  padding: 0 10px;
-  font-size: 24px;
-  line-height: $cell;
-  color: $red;
-  border: 2px solid $red;
-  border-radius: 50% 45% 55% 48% / 60% 50% 55% 45%;
-  transform: rotate(-3deg);
+.recipeTitle {
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: $cell * 1.25;
 }
+
+.recipeHint {
+  font-family: $font-body;
+  font-weight: 400;
+  font-size: $text-small;
+  color: $pencil;
+}
+
+.recipeCode {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 4px 12px;
+  font-size: 22px;
+  white-space: normal;
+  background: $code-bg;
+  border: 1px solid tint(ink, 0.15);
+  box-shadow: 3px 4px 0 -1px tint(ink, 0.06);
+
+  @include mobile {
+    font-size: 15px;
+  }
+}
+
+// --- Формула на стикере -----------------------------------------------------
+
+.formula {
+  display: inline-block;
+  max-width: 100%;
+  margin-top: $cell * 1.25;
+  padding: ($cell * 0.5) $cell;
+  background: $sticky;
+  box-shadow:
+    0 1px 1px $sticky-shadow,
+    6px 8px 14px -8px $sticky-shadow;
+  transform: rotate(-0.8deg);
+
+  code {
+    font-size: 28px;
+    white-space: normal;
+    background: none;
+    padding: 0;
+
+    @include mobile {
+      font-size: 18px;
+    }
+  }
+
+  figcaption {
+    margin-top: 6px;
+    font-family: $font-hand;
+    font-size: 26px;
+    color: $pencil;
+  }
+}
+
+// --- Эффекты окон -----------------------------------------------------------
+
+.effects {
+  margin-top: $cell;
+}
+
+.effect {
+  position: relative;
+  padding-left: $cell;
+
+  &::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    font-family: $font-hand;
+    font-weight: 700;
+    color: $red;
+  }
+}
+
+.effectName {
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: 34px;
+}
+
+// --- Кнопки демо ------------------------------------------------------------
+
+.demoHint {
+  margin-top: $cell;
+  font-family: $font-hand;
+  font-size: 30px;
+  color: $pencil;
+}
+
+// При переносе отступ сверху даёт сама кнопка.
+.demoRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 $cell;
+}
+
+
+.credits {
+  margin-top: $cell;
+  font-size: 18px;
+  line-height: $cell * 0.75;
+  color: $pencil;
+}
+
+// --- Грабли -----------------------------------------------------------------
 
 .pitfalls {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
   gap: $cell;
-  margin-top: $cell;
+  margin-top: $cell * 1.5;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
 }
 
 .pitfall {
   position: relative;
-  padding-left: $cell * 1.25;
+  padding-left: $cell * 1.5;
 
   &::before {
     content: "!";
     position: absolute;
-    top: 4px;
+    top: 6px;
     left: 0;
-    width: 22px;
-    height: 22px;
+    width: 32px;
+    height: 32px;
     font-family: $font-hand;
     font-weight: 700;
-    font-size: 20px;
-    line-height: 20px;
+    font-size: 26px;
+    line-height: 28px;
     text-align: center;
     color: $red;
-    border: 2px solid $red;
+    border: 2.5px solid $red;
     border-radius: 50%;
-  }
-
-  p {
-    font-size: 18px;
   }
 }
 
 .pitfallTitle {
   font-family: $font-hand;
   font-weight: 700;
-  font-size: 26px;
+  font-size: 36px;
   line-height: $cell * 1.25;
 }
 
-.demoHint {
-  margin-top: $cell;
-  font-family: $font-hand;
-  font-size: 24px;
-  color: $pencil;
-}
-
-.aside {
-  margin-top: $cell * 1.5;
-  font-family: $font-hand;
-  font-size: 24px;
-  color: $pencil;
-}
+// --- Библиотеки -------------------------------------------------------------
 
 .libraries {
-  margin-top: $cell;
+  margin-top: $cell * 1.5;
 }
 
 .library {
   display: grid;
-  grid-template-columns: 10em 1fr;
+  grid-template-columns: 9em 1fr;
   gap: 0 $cell * 0.5;
+  align-items: baseline;
 
   & + & {
     margin-top: $cell * 0.5;
@@ -179,16 +338,27 @@
 .libraryName {
   font-family: $font-hand;
   font-weight: 700;
-  font-size: 26px;
+  font-size: 36px;
 }
 
-.libraryText {
-  font-size: 18px;
+.aside {
+  margin-top: $cell * 1.5;
+  font-family: $font-hand;
+  font-size: 32px;
+  color: $pencil;
 }
 
-// Список чтения с нарисованными чекбоксами.
+// --- Что почитать: список с нарисованными чекбоксами ------------------------
+
 .reading {
   margin-top: $cell;
+  font-size: 30px;
+  line-height: $cell * 1.5;
+
+  @include mobile {
+    font-size: 21px;
+    line-height: $cell;
+  }
 }
 
 .readingItem {
@@ -198,11 +368,11 @@
   &::before {
     content: "";
     position: absolute;
-    top: 6px;
+    top: 14px;
     left: 0;
-    width: 16px;
-    height: 16px;
-    border: 2px solid $ink;
+    width: 22px;
+    height: 22px;
+    border: 2.5px solid $ink;
     border-radius: 2px 4px 3px 2px;
     transform: rotate(-3deg);
   }
@@ -212,10 +382,10 @@
     content: "✓";
     position: absolute;
     top: -6px;
-    left: 3px;
+    left: 4px;
     font-family: $font-hand;
     font-weight: 700;
-    font-size: 28px;
+    font-size: 36px;
     color: $red;
   }
 }

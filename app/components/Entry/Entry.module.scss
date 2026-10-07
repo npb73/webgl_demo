@@ -1,12 +1,11 @@
 @use "../../styles/tokens" as *;
 @use "../../styles/mixins" as *;
 
+// Каждая запись — «слайд»: не меньше экрана, стрелки листают по ним.
 .entry {
-  padding-top: $cell * 2;
-
-  & + & {
-    margin-top: $cell * 2;
-  }
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: ($cell * 2) 0 ($cell * 2);
 }
 
 .header {
@@ -17,7 +16,7 @@
 // Номер записи и дата живут на полях слева от красной линии.
 .margin {
   position: absolute;
-  top: $cell * 0.5;
+  top: $cell * 0.75;
   right: calc(100% + #{$cell * 1.25});
   width: $margin-width - $cell;
   display: flex;
@@ -36,28 +35,31 @@
 }
 
 .number {
-  font-size: 28px;
+  font-size: 40px;
   font-weight: 700;
   color: $red;
-}
-
-.date {
-  font-size: 20px;
-  color: $pencil;
-}
-
-.title {
-  @include hand-heading(48px);
-  display: inline-block;
-  @include scribble-underline($red, 3px);
 
   @include mobile {
-    font-size: 40px;
+    font-size: 30px;
+  }
+}
+
+
+.title {
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: 76px;
+  line-height: $cell * 2.5;
+  color: $ink;
+  display: inline-block;
+  @include scribble-underline($red, 4px);
+
+  @include mobile {
+    font-size: 44px;
     line-height: $cell * 1.5;
   }
 }
 
 .body {
-  max-width: 38em;
   display: flow-root;
 }

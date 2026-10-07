@@ -1,0 +1,26 @@
+@use "../../styles/tokens" as *;
+
+// Canvas занимает экран и не прокручивается: прокрутку изображает сцена.
+.canvas {
+  position: fixed;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+// Та же бумага в клетку, что у body: страница внутри canvas рисуется
+// в текстуру целиком, вместе со своим фоном.
+.page {
+  width: 100%;
+  background-color: $paper;
+  background-image:
+    linear-gradient($grid-line 1px, transparent 1px),
+    linear-gradient(90deg, $grid-line 1px, transparent 1px);
+  background-size: $cell $cell;
+}
+
+.spacer {
+  pointer-events: none;
+}

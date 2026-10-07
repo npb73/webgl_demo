@@ -1,0 +1,51 @@
+@use "../../styles/tokens" as *;
+
+// Кнопка «нарисована» ручкой прямо на странице.
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: $cell;
+  padding: 6px 22px 6px 16px;
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: $cell;
+  color: $ink;
+  background: tint(sticky, 0.85);
+  border: 2.5px solid $ink;
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  box-shadow: 3px 4px 0 tint(ink, 0.85);
+  transform: rotate(-1deg);
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+
+  &:hover {
+    transform: rotate(-1deg) translate(-1px, -1px);
+    box-shadow: 5px 6px 0 tint(ink, 0.85);
+  }
+
+  &:active {
+    transform: rotate(-1deg) translate(2px, 3px);
+    box-shadow: 1px 1px 0 tint(ink, 0.85);
+  }
+
+  &:focus-visible {
+    outline: 2px dashed $red;
+    outline-offset: 5px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+.play {
+  width: 0;
+  height: 0;
+  border-top: 9px solid transparent;
+  border-bottom: 9px solid transparent;
+  border-left: 15px solid $red;
+}
