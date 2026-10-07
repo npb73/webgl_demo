@@ -22,7 +22,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "WebGL — дневник фронтендера",
   description:
-    "Что такое WebGL, откуда он взялся и как нарисовать первый треугольник. Заметки для опытных фронтенд-разработчиков.",
+    "Что такое WebGL, как устроены шейдеры и как применить их к самой странице. Презентация для фронтенд-разработчиков.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

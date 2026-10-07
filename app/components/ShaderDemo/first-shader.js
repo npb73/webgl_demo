@@ -1,10 +1,11 @@
 // Самый первый шейдер на чистом WebGL 2 — без библиотек.
 // GLSL-исходники лежат в first-shader.wasm (см. lib/webgl/shader-wasm.js).
 
+import { assetPath } from "../../lib/asset-path";
 import { createProgram } from "../../lib/webgl/program";
 import { loadShaderSources } from "../../lib/webgl/shader-wasm";
 
-const WASM_URL = "/shaders/first-shader.wasm";
+const WASM_URL = assetPath("/shaders/first-shader.wasm");
 
 /**
  * Запускает шейдер на canvas. Возвращает функцию остановки,

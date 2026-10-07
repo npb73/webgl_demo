@@ -5,6 +5,7 @@
 // решаем, где и как их показать. Поэтому окно двигается сменой матрицы,
 // без перерисовки DOM, а линза видит всё, что нарисовано под ней.
 
+import { assetPath } from "../../lib/asset-path";
 import { createProgram } from "../../lib/webgl/program";
 import { loadShaderSources } from "../../lib/webgl/shader-wasm";
 import { createMilkdropMotion, MESH_HEIGHT, MESH_WIDTH } from "../Milkdrop/milkdrop-motion";
@@ -77,8 +78,8 @@ export async function createStageRenderer({ canvas, page, spacer, signal }) {
   const shaderOf = (name) => EFFECTS[name].shader ?? name;
   const shaderNames = [...new Set(effectNames.map(shaderOf))];
   const [quadSources, ...shaderSources] = await Promise.all([
-    loadShaderSources("/shaders/stage-quad.wasm"),
-    ...shaderNames.map((name) => loadShaderSources(`/shaders/${name}.wasm`)),
+    loadShaderSources(assetPath("/shaders/stage-quad.wasm")),
+    ...shaderNames.map((name) => loadShaderSources(assetPath(`/shaders/${name}.wasm`))),
   ]);
   if (signal?.aborted) return null;
 

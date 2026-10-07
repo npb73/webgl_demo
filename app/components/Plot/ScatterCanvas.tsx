@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { assetPath } from "../../lib/asset-path";
 import { createProgram } from "../../lib/webgl/program";
 import { loadShaderSources } from "../../lib/webgl/shader-wasm";
 import { attachPlotInput, createScatterRenderer, createView } from "./scatter-plot";
@@ -18,7 +19,7 @@ export function ScatterCanvas() {
     let disposed = false;
     let cleanup = () => {};
 
-    loadShaderSources("/shaders/scatter.wasm")
+    loadShaderSources(assetPath("/shaders/scatter.wasm"))
       .then(({ vertex, fragment }) => {
         if (disposed) return;
         const gl = canvas.getContext("webgl2", { antialias: false });
