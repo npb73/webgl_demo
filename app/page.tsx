@@ -28,7 +28,7 @@ const entries = [
   { id: "first-shader", title: "Мой первый шейдер" },
   { id: "points", title: "Миллион точек" },
   { id: "lens", title: "Шейдер поверх страницы" },
-  { id: "milkdrop", title: "Milkdrop без музыки" },
+  { id: "winamp", title: "Шейдеры из Winamp" },
   { id: "pitfalls", title: "Грабли" },
   { id: "ecosystem", title: "Брать ли библиотеку" },
   { id: "reading", title: "Что почитать" },
@@ -220,22 +220,8 @@ export default function Home() {
               </div>
             </Entry>
 
-            <Entry {...entryProps("milkdrop")}>
-              <p className={styles.statement}>Каждый кадр — прошлый, сдвинутый по полю движения.</p>
-              <p className={styles.lead}>
-                Так работает Milkdrop, визуализатор Winamp. Поле движения задают уравнения
-                пресета: мы берём только его и применяем к странице, без цветов пресета.
-                Вместо музыки — случайный сигнал.
-              </p>
-              <figure className={styles.formula}>
-                <code>кадр = mix(прошлый кадр по полю пресета, страница, 7%)</code>
-                <figcaption>
-                  движение считает{" "}
-                  <a href="https://github.com/jberg/butterchurn">butterchurn</a> — движок{" "}
-                  <a href="https://github.com/captbaritone/webamp">Webamp</a>
-                </figcaption>
-              </figure>
-              <p className={styles.demoHint}>→ откройте окно — и страница под ним потечёт</p>
+            <Entry {...entryProps("winamp")}>
+              <p className={styles.statement}>Взял шейдеры из Winamp и встроил их сюда.</p>
               <div className={styles.demoRow}>
                 {milkdropDemos.map((demo) => (
                   <ShaderDemo
@@ -249,10 +235,6 @@ export default function Home() {
                   </ShaderDemo>
                 ))}
               </div>
-              <p className={styles.credits}>
-                Пресеты из коллекции butterchurn-presets (MIT):{" "}
-                {milkdropDemos.map((demo) => `«${demo.preset}»`).join(", ")}.
-              </p>
             </Entry>
 
             <Entry {...entryProps("pitfalls")}>
