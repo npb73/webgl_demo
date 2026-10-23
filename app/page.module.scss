@@ -324,34 +324,70 @@
   }
 }
 
-.extras {
+// Три статьи расходов рядом: трафик, оперативная память, видеопамять.
+.budgets {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0 $cell;
-  margin-top: $cell;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $cell;
+  margin-top: $cell * 0.5;
 
   @include mobile {
     grid-template-columns: 1fr;
   }
 }
 
-.extra {
+.budget {
+  min-width: 0;
+}
+
+.budgetTitle {
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: $cell * 1.25;
+}
+
+.budgetSummary {
+  font-family: $font-hand;
+  font-size: 28px;
+  line-height: $cell;
+  color: $red;
+}
+
+.budgetItems {
+  margin-top: $cell * 0.25;
+}
+
+.budgetItem {
   display: flex;
   justify-content: space-between;
+  align-items: baseline;
   gap: 14px;
-  font-size: $text-small;
-  line-height: $cell;
+  padding: ($cell * 0.125) 0;
   border-bottom: 1px dashed tint(ink, 0.25);
 
   dt {
     font-family: $font-hand;
     font-weight: 700;
     font-size: 24px;
+    line-height: $cell * 0.875;
   }
 
   dd {
-    text-align: right;
+    font-family: $font-code;
+    font-size: 18px;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
   }
+}
+
+.budgetNote {
+  display: block;
+  font-family: $font-body;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 24px;
+  color: $pencil;
 }
 
 // --- Слабые места -----------------------------------------------------------

@@ -67,27 +67,6 @@ drawScene(i, region);
     },
   },
   {
-    title: "Подложка → uniform sampler2D",
-    text: "Шейдер читает текстуры по номеру слота. Подложка кладётся в слот 0, и `uniform sampler2D u_page` смотрит туда. Дальше — один полноэкранный треугольник, его результат рисуется на месте окна.",
-    filename: "stage-renderer.js",
-    code: `
-gl.useProgram(fisheye);
-gl.activeTexture(gl.TEXTURE0);
-gl.bindTexture(gl.TEXTURE_2D, w.backdropTarget.texture);
-gl.uniform1i(uPage, 0);
-gl.uniform1f(uStrength, 0.6);
-gl.drawArrays(gl.TRIANGLES, 0, 3);
-`,
-    notes: {
-      "gl.useProgram(fisheye);": "Программа эффекта: общий fullscreen.vert + fisheye.frag.",
-      "gl.activeTexture(gl.TEXTURE0);": "Выбрать текстурный слот 0 — следующий bindTexture положит текстуру в него.",
-      "gl.bindTexture(gl.TEXTURE_2D, w.backdropTarget.texture);": "В слоте — подложка: то, что сейчас под окном.",
-      "gl.uniform1i(uPage, 0);": "Сказать шейдеру: sampler2D u_page читает слот 0.",
-      "gl.uniform1f(uStrength, 0.6);": "Сила линзы k. При открытии окна растёт от 0 — линза «наливается».",
-      "gl.drawArrays(gl.TRIANGLES, 0, 3);": "Один треугольник на всё окно — фрагментный шейдер для каждого его пикселя.",
-    },
-  },
-  {
     title: "Искажение — это выбор, откуда брать пиксель",
     text: "Шейдер не рисует линзу. Для каждого пикселя окна он решает, из какой точки подложки взять цвет: сдвинул координату — получил искажение. Стекло, рябь и огонь устроены так же, меняется только формула.",
     filename: "fisheye.frag",

@@ -7,7 +7,6 @@ import { MarginNote } from "./components/MarginNote/MarginNote";
 import { Notebook } from "./components/Notebook/Notebook";
 import { Pipeline } from "./components/Pipeline/Pipeline";
 import { ProductCards } from "./components/ProductCards/ProductCards";
-import { ResourceMonitor } from "./components/ResourceMonitor/ResourceMonitor";
 import { ScreenshotDemo } from "./components/ScreenshotDemo/ScreenshotDemo";
 import { RichText } from "./components/RichText/RichText";
 import { ScatterCanvas } from "./components/Plot/ScatterCanvas";
@@ -16,28 +15,23 @@ import { ShaderDemo } from "./components/ShaderDemo/ShaderDemo";
 import { SlideNav } from "./components/SlideNav/SlideNav";
 import { Stage } from "./components/Stage/Stage";
 import { TransitionPicker } from "./components/TransitionPicker/TransitionPicker";
-import { paintLoop, practices, sceneStages } from "./content/architecture";
+import { practices } from "./content/practices";
 import {
-  cardHoloNotes,
   drawFrameNotes,
   milkdropWarpNotes,
-  pageCurlNotes,
-  paintLoopNotes,
   scatterVertexNotes,
 } from "./content/code-notes";
 import { drawingRows, versusRows, type VersusRow } from "./content/canvas-vs-webgl";
 import { backdropDemos } from "./content/effects";
 import { overlayFisheyeMain, overlaySteps, type OverlayStep as OverlayStepData } from "./content/overlay";
-import { measuredOn, resourceExtras, resourceRows, resourceTakeaways } from "./content/resources";
+import { measuredOn, resourceBudgets, resourceRows } from "./content/resources";
 import { captureCode, captureNotes } from "./content/screenshot";
 import { libraries, reading } from "./content/links";
 import { milkdropDemos } from "./content/milkdrop";
 import { glossary, pipelineStages, weaknesses, type TermItem } from "./content/model";
 import {
   milkdropWarpCore,
-  pageCurlCore,
   scatterVertexShader,
-  cardHoloCore,
 } from "./content/shader";
 import { drawFrame, steps, type Step } from "./content/steps";
 import styles from "./page.module.scss";
@@ -59,7 +53,6 @@ const entries = [
   { id: "transitions", title: "Переходы с геометрией", part: PAGE },
   { id: "cards", title: "Коллекционные карточки", part: PAGE },
   { id: "screenshot", title: "Скриншот страницы", part: PAGE },
-  { id: "architecture", title: "Как устроен этот сайт", part: PAGE },
   { id: "resources", title: "Сколько это стоит", part: PAGE },
   { id: "pitfalls", title: "Слабые места", part: PROJECT },
   { id: "practices", title: "HTML-in-Canvas + шейдеры", part: PROJECT },
@@ -348,9 +341,6 @@ export default function Home() {
                 </p>
                 <TransitionPicker />
               </Page>
-              <Page>
-                <CodeNote filename="page-transition.vert" code={pageCurlCore} notes={pageCurlNotes} />
-              </Page>
             </Entry>
 
             <Entry {...entryProps("cards")}>
@@ -366,13 +356,6 @@ export default function Home() {
                   → наведите на карточку и поводите указателем; «В корзину» нажимается
                 </p>
                 <ProductCards />
-              </Page>
-              <Page>
-                <p className={styles.lead}>
-                  Каждая карточка — свой снимок-текстура. Шейдер наклоняет её за указателем и
-                  накладывает эффект только на её пиксели: страница вокруг не меняется.
-                </p>
-                <CodeNote filename="product-card.frag" code={cardHoloCore} notes={cardHoloNotes} />
               </Page>
             </Entry>
 
@@ -397,19 +380,6 @@ export default function Home() {
               </Page>
               <Page>
                 <CodeNote filename="stage-renderer.js" code={captureCode} notes={captureNotes} />
-              </Page>
-            </Entry>
-
-            <Entry {...entryProps("architecture")}>
-              <Page>
-                <p className={styles.statement}>Браузер верстает, WebGL рисует.</p>
-                <Pipeline
-                  stages={sceneStages}
-                  caption="обведено красным — код сцены (Stage/stage-renderer.js); остальное делает браузер"
-                />
-              </Page>
-              <Page>
-                <CodeNote filename="stage-renderer.js" code={paintLoop} notes={paintLoopNotes} />
               </Page>
             </Entry>
 
@@ -449,21 +419,25 @@ export default function Home() {
                 </div>
               </Page>
               <Page>
-                <dl className={styles.extras}>
-                  {resourceExtras.map(([name, value]) => (
-                    <div key={name} className={styles.extra}>
-                      <dt>{name}</dt>
-                      <dd>{value}</dd>
-                    </div>
+                <div className={styles.budgets}>
+                  {resourceBudgets.map((budget) => (
+                    <section key={budget.title} className={styles.budget} aria-label={budget.title}>
+                      <p className={styles.budgetTitle}>{budget.title}</p>
+                      <p className={styles.budgetSummary}>{budget.summary}</p>
+                      <dl className={styles.budgetItems}>
+                        {budget.items.map((item) => (
+                          <div key={item.name} className={styles.budgetItem}>
+                            <dt>
+                              {item.name}
+                              {item.note && <span className={styles.budgetNote}>{item.note}</span>}
+                            </dt>
+                            <dd>{item.value}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </section>
                   ))}
-                </dl>
-                <ResourceMonitor />
-              </Page>
-              <Page>
-                <TermList items={resourceTakeaways.slice(0, 2)} practice />
-              </Page>
-              <Page>
-                <TermList items={resourceTakeaways.slice(2)} practice />
+                </div>
               </Page>
             </Entry>
 

@@ -1,37 +1,4 @@
-import type { PipelineStage } from "../components/Pipeline/Pipeline";
 import type { TermItem } from "./model";
-
-// Путь страницы до экрана: от React-разметки до кадра WebGL.
-export const sceneStages: PipelineStage[] = [
-  { name: "React-разметка", hint: "drawable-потомки <canvas layoutsubtree>" },
-  { name: "Вёрстка и отрисовка", hint: "браузер, как обычно; потом событие paint" },
-  { name: "texElementSubImage2D", hint: "страница и рамки окон → текстуры", programmable: true },
-  { name: "Шейдеры", hint: "эффекты окон, карточки, переходы, сборка кадра", programmable: true },
-  { name: "updateElementGeometry", hint: "клик попадает туда, где нарисовано", programmable: true },
-];
-
-// Обработчик paint из Stage/stage-renderer.js, без подробностей.
-export const paintLoop = `
-canvas.addEventListener("paint", (event) => {
-  const changed = new Set(event.changedElements);
-
-  // 1. Снимок — только если браузер перерисовал слайд
-  if (changed.has(page))
-    gl.texElementSubImage2D(gl.TEXTURE_2D, 0, 0, 0, page, { width, height });
-
-  // 2. Где нарисовано — там и кликается; порядок вызовов = z-порядок
-  canvas.updateElementGeometry(page, { canvasTransform: identity });
-  for (const w of windows)
-    canvas.updateElementGeometry(w.shell, { canvasTransform: w.matrix });
-
-  // 3. Эффекты окон — каждый в свою текстуру, потом весь кадр
-  windows.forEach(renderContent);
-  drawScene();
-
-  // 4. Следующий кадр — только пока что-то движется
-  if (animating) canvas.requestPaint();
-});
-`;
 
 // Как подружить HTML-in-Canvas и шейдеры — то, чему научил этот сайт.
 export const practices: TermItem[] = [

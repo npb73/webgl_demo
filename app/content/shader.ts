@@ -19,19 +19,3 @@ export const fisheyeMain = fisheye.slice(fisheyeMainStart, fisheye.indexOf("  //
 // Из шейдера Milkdrop показываем только main: объявления занимают полслайда.
 const milkdropWarp = readShader("milkdrop-warp.frag");
 export const milkdropWarpCore = milkdropWarp.slice(milkdropWarp.indexOf("void main()"));
-
-// Из шейдера переходов — только загиб листа: весь «перелистнуть» в одной функции.
-const pageTransition = readShader("page-transition.vert");
-const curlStart = pageTransition.indexOf("vec3 curl(");
-export const pageCurlCore = pageTransition.slice(curlStart, pageTransition.indexOf("\n}\n", curlStart) + 3);
-
-// Из шейдера карточек — голограмма: весь эффект в нескольких строках.
-const productCard = readShader("product-card.frag");
-const holoStart = productCard.indexOf("  if (u_effect == 0) {");
-const holoEnd = productCard.indexOf("  } else if (u_effect == 1) {");
-export const cardHoloCore = productCard
-  .slice(holoStart, holoEnd)
-  .split("\n")
-  .map((line) => line.slice(2))
-  .join("\n")
-  .trimEnd() + "\n}";
