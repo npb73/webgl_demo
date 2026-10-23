@@ -15,13 +15,6 @@ export function Hero() {
         Разбираем код: от <code>getContext(&quot;webgl2&quot;)</code> до шейдеров
         поверх DOM.
       </p>
-
-      <dl className={styles.meta}>
-        <div>
-          <dt>Владелец:</dt>
-          <dd>фронтендер, которому стало любопытно</dd>
-        </div>
-      </dl>
     </Slide>
   );
 }

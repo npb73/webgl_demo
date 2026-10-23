@@ -45,26 +45,3 @@
     line-height: $cell;
   }
 }
-
-.meta {
-  margin-top: $cell * 2;
-  font-family: $font-hand;
-  font-size: 28px;
-
-  div {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 12px;
-  }
-
-  dt {
-    color: $pencil;
-  }
-
-  dd {
-    flex: 1 1 200px;
-    max-width: 22em;
-    border-bottom: 1px solid tint(ink, 0.45);
-    line-height: $cell - 1px;
-  }
-}
