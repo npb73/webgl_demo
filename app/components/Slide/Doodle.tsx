@@ -8,6 +8,8 @@ import styles from "./Slide.module.scss";
 // красной линии — нарисован автопортрет в кепке с пропеллером. Какие слайды —
 // решается при загрузке страницы, место — каждый раз, когда слайд открывают.
 const CHANCE = 0.15;
+// Где рисунок есть всегда: на слайде с линзами его можно рассмотреть под стеклом.
+const ALWAYS = new Set(["lens"]);
 const IMAGE = `url(${assetPath("/images/coffee-drill.png")})`;
 // Высота к ширине у картинки 453 / 360.
 const ASPECT = 453 / 360;
@@ -29,7 +31,7 @@ function lookFor(slide: string) {
   if (!looks.has(slide)) {
     looks.set(
       slide,
-      Math.random() < CHANCE
+      ALWAYS.has(slide) || Math.random() < CHANCE
         ? { width: Math.round(between(80, 110)), rotate: Math.round(between(-12, 12)) }
         : null,
     );
