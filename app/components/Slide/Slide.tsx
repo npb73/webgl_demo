@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useLayoutEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
 import { getDeck, getServerDeck, subscribeDeck } from "../../lib/deck";
+import { Doodle } from "./Doodle";
 import styles from "./Slide.module.scss";
 
 // Мельче — текст уже не прочитать с экрана: такой слайд прокручивается.
@@ -91,6 +92,7 @@ export function Slide({ id, as: Tag = "section", className, children, ...rest }:
       className={className ? `${styles.slide} ${className}` : styles.slide}
       {...rest}
     >
+      <Doodle slide={id} open={open} />
       <div ref={fitRef} className={styles.fit}>
         <SlideOpenContext.Provider value={open}>{children}</SlideOpenContext.Provider>
       </div>

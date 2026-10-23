@@ -4,6 +4,7 @@
 // Слайд — ровно экран. Поля листа тоже здесь, а не у тетради: так тени
 // и скотч у краёв содержимого не обрезает overflow слайда.
 .slide {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -23,6 +24,44 @@
   overflow-y: auto;
 }
 
+// Над пасхалкой: если рисунок заходит под текст, текст остаётся сверху.
 .fit {
+  position: relative;
+  z-index: 1;
   flex: none;
+}
+
+// Пасхалка (Doodle.tsx): рисунок той же ручкой, что и тетрадь, — картинка
+// служит маской, а цвет даёт фон. Если навести — рисунок покачивается.
+// Пока не нашлось свободное место, рисунка не видно.
+.doodle {
+  position: absolute;
+  z-index: 0;
+  visibility: hidden;
+  aspect-ratio: 360 / 453;
+  background: tint(ink, 0.85);
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  transform: rotate(var(--rotate));
+
+  &:hover {
+    animation: doodle-wiggle 0.6s ease-in-out;
+  }
+
+  @include mobile {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none !important;
+  }
+}
+
+@keyframes doodle-wiggle {
+  25% {
+    transform: rotate(calc(var(--rotate) - 8deg));
+  }
+  75% {
+    transform: rotate(calc(var(--rotate) + 8deg));
+  }
 }
