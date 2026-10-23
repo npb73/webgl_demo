@@ -115,9 +115,10 @@
 }
 
 // Шаг треугольника: слева Canvas 2D, справа WebGL — как в таблице сравнения.
+// WebGL шире: там длиннее и код, и пояснение.
 .sides {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 2fr 3fr;
   gap: 0 $cell;
   margin-top: $cell * 0.25;
 
@@ -139,9 +140,11 @@
   border-left-color: $red;
 }
 
-// Код в колонке мельче, чтобы строка помещалась без переносов.
+// Код в колонке мельче, чтобы строка помещалась без переносов;
+// \n в строке кода — новая строка, как в редакторе.
 .side .recipeCode {
   font-size: 18px;
+  white-space: pre-wrap;
 }
 
 .sideLabel {

@@ -1,4 +1,4 @@
-import { CanvasVsWebgl } from "./components/CanvasVsWebgl/CanvasVsWebgl";
+import type { ReactNode } from "react";
 import { CodeNote } from "./components/CodeNote/CodeNote";
 import { Contents, type ContentsItem } from "./components/Contents/Contents";
 import { Entry, Page } from "./components/Entry/Entry";
@@ -25,7 +25,7 @@ import {
   paintLoopNotes,
   scatterVertexNotes,
 } from "./content/code-notes";
-import { versusRows } from "./content/canvas-vs-webgl";
+import { drawingRows, versusRows, type VersusRow } from "./content/canvas-vs-webgl";
 import { backdropDemos } from "./content/effects";
 import { overlayFisheyeMain, overlaySteps, type OverlayStep as OverlayStepData } from "./content/overlay";
 import { measuredOn, resourceExtras, resourceRows, resourceTakeaways } from "./content/resources";
@@ -73,6 +73,35 @@ function entryProps(id: EntryId) {
   const index = entries.findIndex((entry) => entry.id === id);
   const { title } = entries[index];
   return { id, title, number: index + 1 };
+}
+
+/** Таблица «Canvas 2D | WebGL»: строка — операция, справа — как то же делают в WebGL. */
+function VersusTable({ caption, rows }: { caption: ReactNode; rows: readonly VersusRow[] }) {
+  return (
+    <table className={styles.versus}>
+      <caption className={styles.versusCaption}>{caption}</caption>
+      <thead>
+        <tr>
+          <td />
+          <th scope="col">Canvas 2D</th>
+          <th scope="col">WebGL</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row) => (
+          <tr key={row.step}>
+            <th scope="row">{row.step}</th>
+            <td>
+              <RichText text={row.canvas} />
+            </td>
+            <td>
+              <RichText text={row.webgl} />
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 }
 
 /** Шаги треугольника с номера first: каждый — рядом с тем же на Canvas 2D. */
@@ -172,7 +201,7 @@ export default function Home() {
                 <p className={styles.statement}>
                   Весь WebGL — это объект <code>gl</code>. Сначала настраиваем, потом говорим «рисуй».
                 </p>
-                <CodeNote filename="first-shader.js" code={drawFrame} notes={drawFrameNotes} />
+                <CodeNote filename="draw.js" code={drawFrame} notes={drawFrameNotes} />
               </Page>
             </Entry>
 
@@ -213,38 +242,17 @@ export default function Home() {
                 <p className={styles.statement}>
                   В Canvas 2D цикл по пикселям пишем мы. В WebGL его делает видеокарта.
                 </p>
-                <table className={styles.versus}>
-                  <caption className={styles.versusCaption}>
-                    Один градиент, одна формула: <code>0.5 + 0.5 · cos(время + координата)</code>
-                  </caption>
-                  <thead>
-                    <tr>
-                      <td />
-                      <th scope="col">Canvas 2D</th>
-                      <th scope="col">WebGL</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {versusRows.map((row) => (
-                      <tr key={row.step}>
-                        <th scope="row">{row.step}</th>
-                        <td>
-                          <RichText text={row.canvas} />
-                        </td>
-                        <td>
-                          <RichText text={row.webgl} />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <VersusTable
+                  caption={
+                    <>
+                      Один градиент, одна формула: <code>0.5 + 0.5 · cos(время + координата)</code>
+                    </>
+                  }
+                  rows={versusRows}
+                />
               </Page>
               <Page>
-                <p className={styles.demoHint}>
-                  → запустите по очереди: пока считает Canvas 2D, тормозит вся страница — тот же
-                  поток рисует интерфейс
-                </p>
-                <CanvasVsWebgl />
+                <VersusTable caption="Что Canvas 2D умеет из коробки — и как то же делают в WebGL" rows={drawingRows} />
               </Page>
             </Entry>
 

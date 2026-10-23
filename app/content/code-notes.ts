@@ -7,7 +7,7 @@ const version = {
   "#version 300 es": "Версия языка: GLSL ES 3.00 из WebGL 2. Строго первой строкой — иначе компилятор возьмёт старый GLSL 1.00.",
 };
 
-// first-shader.js, функция кадра.
+// Функция кадра со слайда «WebGL в коде».
 export const drawFrameNotes: CodeNotes = {
   "const draw = (time) =>": "Функция одного кадра. time — миллисекунды с загрузки страницы, их передаёт requestAnimationFrame.",
   "gl.viewport(": "В какую часть буфера рисовать — во весь canvas. После ресайза без этого картинка останется старого размера.",

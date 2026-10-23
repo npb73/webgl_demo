@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useLayoutEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
+import { useLayoutEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
 import { getDeck, getServerDeck, subscribeDeck } from "../../lib/deck";
 import { Doodle } from "./Doodle";
 import styles from "./Slide.module.scss";
@@ -17,11 +17,6 @@ type SlideProps = {
 };
 
 const slideOf = (deck: ReturnType<typeof getDeck>) => deck.slide;
-
-const SlideOpenContext = createContext(true);
-
-/** Открыт ли слайд, на котором лежит компонент: на закрытом демо не тратит кадры. */
-export const useSlideOpen = () => useContext(SlideOpenContext);
 
 /**
  * Слайд — ровно экран. Видно только открытый слайд; если содержимое
@@ -94,7 +89,7 @@ export function Slide({ id, as: Tag = "section", className, children, ...rest }:
     >
       <Doodle slide={id} open={open} />
       <div ref={fitRef} className={styles.fit}>
-        <SlideOpenContext.Provider value={open}>{children}</SlideOpenContext.Provider>
+        {children}
       </div>
     </Tag>
   );

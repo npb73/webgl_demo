@@ -39,12 +39,12 @@ export const steps: Step[] = [
   {
     title: "Точки фигуры",
     canvas: {
-      code: "ctx.moveTo(0, 0); ctx.lineTo(100, 0); ctx.lineTo(0, 100)",
+      code: "ctx.moveTo(0, 0);\nctx.lineTo(100, 0);\nctx.lineTo(0, 100);",
       text: "Точки — вызовами, по одной и каждый кадр заново.",
     },
     webgl: {
-      code: "gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)",
-      text: "Все вершины — один `Float32Array`, один раз в видеопамять. Дальше рисуем, ничего не пересылая.",
+      code: "const buffer = gl.createBuffer();\ngl.bindBuffer(gl.ARRAY_BUFFER, buffer);\ngl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);",
+      text: "В WebGL нельзя сказать «положи точки вот в этот буфер». Сначала выбираем буфер — `bindBuffer`, потом `bufferData` кладёт в него точки. `ARRAY_BUFFER` значит «буфер с точками». Загружаем один раз — сразу в память видеокарты.",
     },
   },
   {
@@ -71,7 +71,7 @@ export const steps: Step[] = [
   },
 ];
 
-// Кадр из first-shader.js: настроить состояние `gl` и вызвать отрисовку.
+// Кадр WebGL: настроить состояние `gl` и вызвать отрисовку.
 export const drawFrame = `
 const draw = (time) => {
   gl.viewport(0, 0, canvas.width, canvas.height);
