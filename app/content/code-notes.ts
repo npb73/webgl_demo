@@ -3,10 +3,6 @@
 // длинный. Пустые строки, «}» и комментарии подсказок не получают.
 export type CodeNotes = Record<string, string>;
 
-const version = {
-  "#version 300 es": "Версия языка: GLSL ES 3.00 из WebGL 2. Строго первой строкой — иначе компилятор возьмёт старый GLSL 1.00.",
-};
-
 // Функция кадра со слайда «WebGL в коде».
 export const drawFrameNotes: CodeNotes = {
   "const draw = (time) =>": "Функция одного кадра. time — миллисекунды с загрузки страницы, их передаёт requestAnimationFrame.",
@@ -16,21 +12,6 @@ export const drawFrameNotes: CodeNotes = {
   "gl.uniform1f(": "Положить время в секундах в u_time. Шейдер прочитает его для каждого пикселя.",
   "gl.drawArrays(": "Нарисовать 3 вершины треугольниками. Ни программу, ни вершины не передаём — берётся то, что привязано выше.",
   "requestAnimationFrame(draw)": "Вызвать draw перед следующей перерисовкой экрана — обычно 60 раз в секунду.",
-};
-
-export const scatterVertexNotes: CodeNotes = {
-  ...version,
-  "in vec2 a_position;": "Атрибут: своя позиция у каждой точки. Миллион значений один раз загружены в видеопамять.",
-  "in float a_group;": "Второй атрибут — номер сегмента 0..3, по нему выбирается цвет.",
-  "uniform vec2 u_center;": "Центр видимой области. Перетаскивание меняет только его — один uniform2f вместо обхода массива.",
-  "uniform vec2 u_scale;": "Масштаб по x и y: зум колесом плюс поправка на пропорции окна.",
-  "uniform float u_pointSize;": "Размер точки в пикселях буфера, с учётом devicePixelRatio.",
-  "uniform vec3 u_palette[4];": "Массив из четырёх цветов — по одному на сегмент.",
-  "out vec3 v_color;": "Цвет точки — передаётся во фрагментный шейдер.",
-  "void main()": "Вызывается на каждую из миллиона точек, параллельно на GPU.",
-  "gl_Position = vec4((a_position - u_center) * u_scale, 0.0, 1.0);": "Весь зум и сдвиг — одна строка: сдвинуть к центру вида и растянуть. w = 1 — без перспективы.",
-  "gl_PointSize = u_pointSize;": "Для gl.POINTS: сторона квадратика точки в пикселях.",
-  "v_color = u_palette[int(a_group)];": "Взять цвет из палитры по номеру сегмента.",
 };
 
 export const milkdropWarpNotes: CodeNotes = {

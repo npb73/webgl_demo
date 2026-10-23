@@ -19,7 +19,6 @@ import { practices } from "./content/practices";
 import {
   drawFrameNotes,
   milkdropWarpNotes,
-  scatterVertexNotes,
 } from "./content/code-notes";
 import { drawingRows, versusRows, type VersusRow } from "./content/canvas-vs-webgl";
 import { backdropDemos } from "./content/effects";
@@ -31,7 +30,6 @@ import { milkdropDemos } from "./content/milkdrop";
 import { glossary, pipelineStages, weaknesses, type TermItem } from "./content/model";
 import {
   milkdropWarpCore,
-  scatterVertexShader,
 } from "./content/shader";
 import { drawFrame, steps, type Step } from "./content/steps";
 import styles from "./page.module.scss";
@@ -258,9 +256,6 @@ export default function Home() {
                 <ShaderDemo label="Открыть график" windowTitle="million-points.exe" effect="scatter" flat>
                   <ScatterCanvas />
                 </ShaderDemo>
-              </Page>
-              <Page>
-                <CodeNote filename="scatter.vert" code={scatterVertexShader} notes={scatterVertexNotes} />
               </Page>
             </Entry>
 

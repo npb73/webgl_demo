@@ -6,7 +6,6 @@ import { join } from "node:path";
 const readShader = (file: string) =>
   readFileSync(join(process.cwd(), "shaders", file), "utf8");
 
-export const scatterVertexShader = readShader("scatter.vert");
 
 // Из линзы — чтение подложки, сама формула fish-eye и сборка цвета;
 // объявления и «стеклянный» блик остаются за кадром. Целиком это не
