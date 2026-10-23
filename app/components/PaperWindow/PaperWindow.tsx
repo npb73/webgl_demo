@@ -17,7 +17,6 @@ import { useStage, type StageContextValue } from "../Stage/Stage";
 import styles from "./PaperWindow.module.scss";
 
 export type WindowEffect =
-  | "first-shader"
   | "scatter"
   | "fisheye"
   | "broken-glass"

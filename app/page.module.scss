@@ -114,6 +114,48 @@
   }
 }
 
+// Шаг треугольника: слева Canvas 2D, справа WebGL — как в таблице сравнения.
+.sides {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 $cell;
+  margin-top: $cell * 0.25;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+    gap: $cell * 0.5;
+  }
+}
+
+.side {
+  min-width: 0;
+  padding: ($cell * 0.25) ($cell * 0.5) ($cell * 0.375);
+  border-left: 2.5px solid tint(ink, 0.25);
+}
+
+// WebGL — красным, как программируемые этапы на схемах.
+.webglSide {
+  background: tint(red, 0.05);
+  border-left-color: $red;
+}
+
+// Код в колонке мельче, чтобы строка помещалась без переносов.
+.side .recipeCode {
+  font-size: 18px;
+}
+
+.sideLabel {
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: $cell * 0.75;
+  color: $pencil;
+
+  .webglSide & {
+    color: $red;
+  }
+}
+
 // В шаге может лежать листок с кодом: без min-width длинная строка
 // растянула бы колонку грида, а не прокрутила бы код.
 .recipeBody {
@@ -133,69 +175,71 @@
   }
 }
 
-// --- Пара шейдеров: .vert и .frag рядом -------------------------------------
+// --- Canvas 2D против WebGL: шаг за шагом --------------------------------
 
-// Колонок всегда две: слайд, уменьшенный под экран, не должен
-// перестраиваться в три — от этого он стал бы только выше.
-.pair {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: $cell;
-  margin-top: $cell;
+.versus {
+  width: 100%;
+  margin-top: $cell * 0.5;
+  border-collapse: collapse;
+  font-size: $text-small;
+  line-height: $cell * 0.875;
 
-  @include mobile {
-    grid-template-columns: 1fr;
-  }
-}
-
-// Карточка обведена красным, как программируемые этапы на схеме конвейера.
-.half {
-  padding: ($cell * 0.5) $cell ($cell * 0.75);
-  background: tint(paper, 0.85);
-  border: 2.5px solid $red;
-  border-radius: 14px 6px 12px 8px / 8px 12px 6px 14px;
-
-  &:nth-child(odd) {
-    transform: rotate(-0.4deg);
+  th,
+  td {
+    padding: ($cell * 0.25) 14px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1.5px solid tint(ink, 0.25);
   }
 
-  &:nth-child(even) {
-    transform: rotate(0.4deg);
+  // Код в ячейке переносится, а не растягивает таблицу.
+  code {
+    white-space: normal;
   }
-}
 
-.halfTitle {
-  font-family: $font-hand;
-  font-weight: 700;
-  font-size: 36px;
-  line-height: $cell * 1.25;
-}
-
-.halfFacts {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0 14px;
-  margin: ($cell * 0.25) 0 ($cell * 0.5);
-
-  dt {
+  thead th {
     font-family: $font-hand;
-    font-size: $text-small;
+    font-weight: 700;
+    font-size: 34px;
+    line-height: $cell * 1.25;
+    border-bottom: 2px solid $ink;
+  }
+
+  // Колонка WebGL обведена красным, как программируемые этапы на схемах.
+  thead th:last-child {
+    color: $red;
+  }
+
+  tbody th {
+    width: 7em;
+    font-family: $font-hand;
+    font-weight: 700;
+    font-size: 24px;
     color: $pencil;
   }
 
-  dd {
-    min-width: 0;
+  td:last-child {
+    background: tint(red, 0.05);
+  }
+
+  @include mobile {
+    font-size: 15px;
+    line-height: 22px;
+
+    tbody th {
+      width: auto;
+      font-size: 18px;
+    }
   }
 }
 
-// Рисунок карандашом прямо на листе: прозрачный PNG поверх клетки,
-// на всю ширину карточки, без рамки.
-.halfImage {
-  display: block;
-  width: calc(100% + #{$cell});
-  max-width: none;
-  height: auto;
-  margin: 0 ($cell * -0.5) ($cell * 0.5);
+.versusCaption {
+  caption-side: top;
+  padding-bottom: $cell * 0.25;
+  font-family: $font-hand;
+  font-size: 28px;
+  text-align: left;
+  color: $pencil;
 }
 
 // --- Кнопки демо ------------------------------------------------------------
@@ -309,7 +353,7 @@
 
 // --- Слабые места -----------------------------------------------------------
 
-// Две колонки, как у .pair: уменьшенный слайд не перестраивается.
+// Колонок всегда две: уменьшенный под экран слайд не перестраивается в три.
 .pitfalls {
   display: grid;
   grid-template-columns: 1fr 1fr;

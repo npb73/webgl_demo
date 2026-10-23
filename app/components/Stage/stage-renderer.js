@@ -64,7 +64,6 @@ const FRAME_MS = 1000 / 60;
 // animated — картинка меняется во времени, нужен каждый кадр.
 // strength — значение u_strength, пока окно появляется (t: 0 → 1).
 const EFFECTS = {
-  "first-shader": { backdrop: false, animated: true, strength: () => 1 },
   scatter: { plot: true, backdrop: false, animated: false, strength: () => 1 },
   fisheye: { backdrop: true, animated: false, strength: (t) => 0.6 * easeOutBack(t) },
   "broken-glass": { backdrop: true, animated: false, strength: easeOutCubic },

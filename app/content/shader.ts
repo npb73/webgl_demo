@@ -6,9 +6,6 @@ import { join } from "node:path";
 const readShader = (file: string) =>
   readFileSync(join(process.cwd(), "shaders", file), "utf8");
 
-export const firstFragmentShader = readShader("first-shader.frag");
-// Пара к first-shader.frag: своего .vert у него нет, берётся общий.
-export const fullscreenVertexShader = readShader("fullscreen.vert");
 export const scatterVertexShader = readShader("scatter.vert");
 
 // Из линзы — чтение подложки, сама формула fish-eye и сборка цвета;

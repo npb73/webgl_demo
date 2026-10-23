@@ -1,36 +1,73 @@
-export type Step = {
-  title: string;
+/** Одна сторона шага: строка кода и что она значит; `обратные кавычки` → <code>. */
+export type StepSide = {
   code: string;
-  /** Что делает шаг и что нужно рядом; `обратные кавычки` → <code>. */
   text: string;
 };
 
-// Минимальная программа — по одной ключевой строке на шаг.
+export type Step = {
+  title: string;
+  /** Как то же самое делают на обычном Canvas 2D — это все знают. */
+  canvas: StepSide;
+  webgl: StepSide;
+};
+
+// Минимальная программа — треугольник. Каждый шаг рядом с тем, как тот же
+// треугольник рисуют на Canvas 2D: шейдеры понятнее через знакомое.
 export const steps: Step[] = [
   {
     title: "Контекст",
-    code: 'const gl = canvas.getContext("webgl2")',
-    text: "Весь WebGL — методы объекта `gl`, привязанного к одному canvas. Если WebGL 2 нет, вернётся `null`, а не исключение — проверяйте сразу.",
+    canvas: {
+      code: 'const ctx = canvas.getContext("2d")',
+      text: "В `ctx` готовые фигуры и кисти: `fillRect`, `arc`, `fillStyle`.",
+    },
+    webgl: {
+      code: 'const gl = canvas.getContext("webgl2")',
+      text: "Тот же вызов, другой объект: фигур нет — только буферы, шейдеры и `drawArrays`. Без WebGL 2 вернёт `null`.",
+    },
   },
   {
-    title: "Программа",
-    code: "const program = createProgram(gl, vertexSrc, fragmentSrc)",
-    text: "Внутри — `shaderSource` и `compileShader` для каждой половины, потом `linkProgram` склеивает пару. GLSL передаётся строкой и компилируется драйвером прямо в браузере; ошибки нужно запрашивать самим через `getShaderInfoLog`.",
+    title: "Чем красить",
+    canvas: {
+      code: 'ctx.fillStyle = "tomato"',
+      text: "Цвет, градиент или узор — одно свойство. Кисти только те, что есть в браузере.",
+    },
+    webgl: {
+      code: "const program = createProgram(gl, vert, frag)",
+      text: "Кисть пишем сами — два шейдера на GLSL. Компилируются прямо в браузере, ошибки читаем через `getShaderInfoLog`.",
+    },
   },
   {
-    title: "Буфер",
-    code: "gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW)",
-    text: "Координаты вершин — обычный typed array. Перед этим буфер создают и привязывают (`createBuffer`, `bindBuffer`), а `bufferData` один раз копирует данные в видеопамять. `STATIC_DRAW` — подсказка драйверу: данные меняться не будут.",
+    title: "Точки фигуры",
+    canvas: {
+      code: "ctx.moveTo(0, 0); ctx.lineTo(100, 0); ctx.lineTo(0, 100)",
+      text: "Точки — вызовами, по одной и каждый кадр заново.",
+    },
+    webgl: {
+      code: "gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)",
+      text: "Все вершины — один `Float32Array`, один раз в видеопамять. Дальше рисуем, ничего не пересылая.",
+    },
   },
   {
-    title: "Атрибут",
-    code: "gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0)",
-    text: "Буфер — просто байты; эта строка говорит, как их читать: по 2 `float` на вершину, подряд. `loc` — номер `in vec2 a_position` из `getAttribLocation`, и его нужно включить `enableVertexAttribArray`. Всю настройку запоминает VAO.",
+    title: "Как читать точки",
+    canvas: {
+      code: "ctx.lineTo(x, y)",
+      text: "Объяснять нечего: аргументы `x` и `y` — уже координаты.",
+    },
+    webgl: {
+      code: "gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0)",
+      text: "Буфер — просто байты. Говорим: по 2 `float` на вершину → в `in vec2 a_position`. Настройку запоминает VAO.",
+    },
   },
   {
-    title: "Отрисовка",
-    code: "gl.useProgram(program); gl.drawArrays(gl.TRIANGLES, 0, 3)",
-    text: "`useProgram` выбирает шейдеры, `drawArrays` запускает конвейер: 3 вершины → один треугольник → фрагментный шейдер на каждом его пикселе. Что рисовать, не передаётся — берётся то, что привязано сейчас.",
+    title: "Нарисовать",
+    canvas: {
+      code: "ctx.fill()",
+      text: "Браузер сам находит пиксели внутри пути и красит их `fillStyle`.",
+    },
+    webgl: {
+      code: "gl.useProgram(program); gl.drawArrays(gl.TRIANGLES, 0, 3)",
+      text: "Тоже «залей треугольник», но цвет каждого пикселя считает наш шейдер. Рисуется то, что привязано сейчас.",
+    },
   },
 ];
 

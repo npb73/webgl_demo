@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { CanvasVsWebgl } from "./components/CanvasVsWebgl/CanvasVsWebgl";
 import { CodeNote } from "./components/CodeNote/CodeNote";
 import { Contents, type ContentsItem } from "./components/Contents/Contents";
 import { Entry, Page } from "./components/Entry/Entry";
@@ -12,7 +12,6 @@ import { ScreenshotDemo } from "./components/ScreenshotDemo/ScreenshotDemo";
 import { RichText } from "./components/RichText/RichText";
 import { ScatterCanvas } from "./components/Plot/ScatterCanvas";
 import { NeedsHtmlInCanvas } from "./components/ShaderDemo/NeedsHtmlInCanvas";
-import { ShaderCanvas } from "./components/ShaderDemo/ShaderCanvas";
 import { ShaderDemo } from "./components/ShaderDemo/ShaderDemo";
 import { SlideNav } from "./components/SlideNav/SlideNav";
 import { Stage } from "./components/Stage/Stage";
@@ -21,29 +20,26 @@ import { paintLoop, practices, sceneStages } from "./content/architecture";
 import {
   cardHoloNotes,
   drawFrameNotes,
-  firstShaderNotes,
-  fullscreenVertexNotes,
   milkdropWarpNotes,
   pageCurlNotes,
   paintLoopNotes,
   scatterVertexNotes,
 } from "./content/code-notes";
+import { versusRows } from "./content/canvas-vs-webgl";
 import { backdropDemos } from "./content/effects";
 import { overlayFisheyeMain, overlaySteps, type OverlayStep as OverlayStepData } from "./content/overlay";
 import { measuredOn, resourceExtras, resourceRows, resourceTakeaways } from "./content/resources";
 import { captureCode, captureNotes } from "./content/screenshot";
 import { libraries, reading } from "./content/links";
 import { milkdropDemos } from "./content/milkdrop";
-import { fragJourney, glossary, pipelineStages, shaderPair, weaknesses, type TermItem } from "./content/model";
+import { glossary, pipelineStages, weaknesses, type TermItem } from "./content/model";
 import {
-  firstFragmentShader,
-  fullscreenVertexShader,
   milkdropWarpCore,
   pageCurlCore,
   scatterVertexShader,
   cardHoloCore,
 } from "./content/shader";
-import { drawFrame, steps } from "./content/steps";
+import { drawFrame, steps, type Step } from "./content/steps";
 import styles from "./page.module.scss";
 
 // Три части рассказа: как устроен код WebGL → что даёт страница-текстура
@@ -79,19 +75,26 @@ function entryProps(id: EntryId) {
   return { id, title, number: index + 1 };
 }
 
-/** Шаги рецепта с номера first: длинный рецепт идёт на нескольких экранах. */
-function Recipe({ steps: items, first = 1 }: { steps: readonly { title: string; code: string; text: string }[]; first?: number }) {
+/** Шаги треугольника с номера first: каждый — рядом с тем же на Canvas 2D. */
+function TriangleSteps({ items, first = 1 }: { items: readonly Step[]; first?: number }) {
   return (
     <ol className={styles.recipe} start={first}>
       {items.map((step, index) => (
         <li key={step.title} className={styles.recipeStep}>
           <span className={styles.recipeNumber}>{first + index}</span>
-          <div>
+          <div className={styles.recipeBody}>
             <p className={styles.recipeTitle}>{step.title}</p>
-            <code className={styles.recipeCode}>{step.code}</code>
-            <p className={styles.recipeText}>
-              <RichText text={step.text} />
-            </p>
+            <div className={styles.sides}>
+              {(["canvas", "webgl"] as const).map((side) => (
+                <div key={side} className={side === "webgl" ? `${styles.side} ${styles.webglSide}` : styles.side}>
+                  <p className={styles.sideLabel}>{side === "webgl" ? "WebGL" : "Canvas 2D"}</p>
+                  <code className={styles.recipeCode}>{step[side].code}</code>
+                  <p className={styles.recipeText}>
+                    <RichText text={step[side].text} />
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </li>
       ))}
@@ -194,92 +197,54 @@ export default function Home() {
 
             <Entry {...entryProps("first-triangle")}>
               <Page>
-                <p className={styles.statement}>Минимальная программа — пять шагов.</p>
-                <Recipe steps={steps.slice(0, 2)} />
+                <p className={styles.statement}>Тот же треугольник: в Canvas 2D — пара строк, в WebGL — пять шагов.</p>
+                <TriangleSteps items={steps.slice(0, 1)} />
               </Page>
               <Page>
-                <Recipe steps={steps.slice(2)} first={3} />
+                <TriangleSteps items={steps.slice(1, 3)} first={2} />
+              </Page>
+              <Page>
+                <TriangleSteps items={steps.slice(3)} first={4} />
               </Page>
             </Entry>
 
             <Entry {...entryProps("first-shader")}>
               <Page>
-                <p className={styles.statement}>Фрагментный шейдер: (координата, время) → цвет.</p>
-                <CodeNote filename="first-shader.frag" code={firstFragmentShader} notes={firstShaderNotes} />
-              </Page>
-              <Page>
-                <MarginNote title="Первые две строки" placement="inline">
-                  <p>
-                    <code>#version 300 es</code> — GLSL ES 3.00 из WebGL 2, строго первой строкой.
-                    Без неё компилятор возьмёт старый GLSL 1.00, где нет <code>in</code>/
-                    <code>out</code>, <code>gl_VertexID</code> и <code>texture()</code>.
-                  </p>
-                  <p>
-                    <code>precision highp float;</code> — у фрагментного шейдера нет точности по
-                    умолчанию: без этой строки он не соберётся.
-                  </p>
-                </MarginNote>
-                <ShaderDemo label="Запустить шейдер" windowTitle="first-shader.exe" effect="first-shader">
-                  <ShaderCanvas />
-                </ShaderDemo>
-                <p className={styles.lead}>
-                  Шейдер — всегда пара: <code>.vert</code> решает, <em>где</em> рисовать,{" "}
-                  <code>.frag</code> — <em>каким цветом</em>. Между ними GPU сам находит пиксели
-                  внутри треугольника.
+                <p className={styles.statement}>
+                  В Canvas 2D цикл по пикселям пишем мы. В WebGL его делает видеокарта.
                 </p>
+                <table className={styles.versus}>
+                  <caption className={styles.versusCaption}>
+                    Один градиент, одна формула: <code>0.5 + 0.5 · cos(время + координата)</code>
+                  </caption>
+                  <thead>
+                    <tr>
+                      <td />
+                      <th scope="col">Canvas 2D</th>
+                      <th scope="col">WebGL</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {versusRows.map((row) => (
+                      <tr key={row.step}>
+                        <th scope="row">{row.step}</th>
+                        <td>
+                          <RichText text={row.canvas} />
+                        </td>
+                        <td>
+                          <RichText text={row.webgl} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </Page>
               <Page>
-                <ul className={styles.pair}>
-                  {shaderPair.map((half) => (
-                    <li key={half.file} className={styles.half}>
-                      <p className={styles.halfTitle}>
-                        <code>{half.file}</code> {half.name}
-                      </p>
-                      <dl className={styles.halfFacts}>
-                        <dt>вызов</dt>
-                        <dd>{half.runs}</dd>
-                        <dt>ответ</dt>
-                        <dd>
-                          <code>{half.answers}</code>
-                        </dd>
-                        <dt>тип</dt>
-                        <dd>
-                          <code>{half.type}</code>
-                        </dd>
-                      </dl>
-                      <Image
-                        src={half.image}
-                        alt={half.imageAlt}
-                        className={styles.halfImage}
-                        // Статический сайт: без сервера оптимизации картинка отдаётся как есть.
-                        unoptimized
-                      />
-                      <p>{half.text}</p>
-                    </li>
-                  ))}
-                </ul>
-              </Page>
-              <Page>
-                <p className={styles.lead}>
-                  <code>.frag</code> красит только пиксели внутри треугольника. Чтобы закрасить весь
-                  canvas, нужен треугольник, который его целиком накрывает, — и это единственная
-                  работа вершинного шейдера в первом примере.
+                <p className={styles.demoHint}>
+                  → запустите по очереди: пока считает Canvas 2D, тормозит вся страница — тот же
+                  поток рисует интерфейс
                 </p>
-                <p className={styles.lead}>
-                  Его делает общий файл <code>fullscreen.vert</code>: он не читает вершины из памяти, а
-                  вычисляет три угла по номеру вершины — 0, 1, 2. Треугольник выходит больше экрана, лишнее
-                  GPU обрезает. Всё, что видно на картинке, рисует <code>.frag</code>.
-                </p>
-              </Page>
-              <Page>
-                <CodeNote filename="fullscreen.vert" code={fullscreenVertexShader} notes={fullscreenVertexNotes} />
-              </Page>
-              <Page>
-                <p className={styles.lead}>Как этот файл оказывается на странице:</p>
-                <Pipeline
-                  stages={fragJourney}
-                  caption="обведено красным — код, который выполняет GPU; остальное — сборка и JS"
-                />
+                <CanvasVsWebgl />
               </Page>
             </Entry>
 

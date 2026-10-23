@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
+import { createContext, useContext, useLayoutEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
 import { getDeck, getServerDeck, subscribeDeck } from "../../lib/deck";
 import styles from "./Slide.module.scss";
 
@@ -16,6 +16,11 @@ type SlideProps = {
 };
 
 const slideOf = (deck: ReturnType<typeof getDeck>) => deck.slide;
+
+const SlideOpenContext = createContext(true);
+
+/** Открыт ли слайд, на котором лежит компонент: на закрытом демо не тратит кадры. */
+export const useSlideOpen = () => useContext(SlideOpenContext);
 
 /**
  * Слайд — ровно экран. Видно только открытый слайд; если содержимое
@@ -87,7 +92,7 @@ export function Slide({ id, as: Tag = "section", className, children, ...rest }:
       {...rest}
     >
       <div ref={fitRef} className={styles.fit}>
-        {children}
+        <SlideOpenContext.Provider value={open}>{children}</SlideOpenContext.Provider>
       </div>
     </Tag>
   );

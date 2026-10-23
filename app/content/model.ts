@@ -1,7 +1,4 @@
-import type { StaticImageData } from "next/image";
 import type { PipelineStage } from "../components/Pipeline/Pipeline";
-import fragmentShaderImage from "./images/fragment-shader.png";
-import vertexShaderImage from "./images/vertex-shader.png";
 
 export const pipelineStages: PipelineStage[] = [
   { name: "Вершины", hint: "массив чисел в буфере" },
@@ -9,54 +6,6 @@ export const pipelineStages: PipelineStage[] = [
   { name: "Растеризация", hint: "пиксели внутри треугольника" },
   { name: "Fragment shader", hint: "раз на пиксель → цвет", programmable: true },
   { name: "Экран", hint: "или текстура" },
-];
-
-export type ShaderHalf = {
-  /** Расширение файла — только соглашение; для WebGL важен type в gl.createShader(type). */
-  file: string;
-  name: string;
-  type: string;
-  /** Сколько раз GPU вызывает main(). */
-  runs: string;
-  /** На какой вопрос отвечает шейдер и чем. */
-  answers: string;
-  text: string;
-  /** Рисунок на полях: что шейдер получает и что отдаёт. */
-  image: StaticImageData;
-  imageAlt: string;
-};
-
-// Шейдерная программа — всегда пара: без любой из половин linkProgram не соберёт её.
-export const shaderPair: ShaderHalf[] = [
-  {
-    file: ".vert",
-    name: "Вершинный шейдер",
-    type: "gl.VERTEX_SHADER",
-    runs: "раз на каждую вершину",
-    answers: "где? → gl_Position",
-    text: "Получает вершины из буфера и решает, где они окажутся на экране. Это форма: треугольник, сетка листа, миллион точек. Двигать, вращать и проецировать 3D — тоже здесь.",
-    image: vertexShaderImage,
-    imageAlt: "Вершин немного; вершинный шейдер переводит их в координаты на экране — тетраэдр поворачивается.",
-  },
-  {
-    file: ".frag",
-    name: "Фрагментный шейдер",
-    type: "gl.FRAGMENT_SHADER",
-    runs: "раз на каждый пиксель внутри треугольника",
-    answers: "какого цвета? → outColor",
-    text: "Видит только свой пиксель: координату, то, что передал вершинный, uniform и текстуры. Градиенты, линзы, огонь и Milkdrop — всё это фрагментные шейдеры.",
-    image: fragmentShaderImage,
-    imageAlt: "Пикселей внутри треугольника много; фрагментный шейдер даёт цвет каждому — получается градиент.",
-  },
-];
-
-// Путь first-shader.frag от файла в репозитории до пикселей на странице.
-export const fragJourney: PipelineStage[] = [
-  { name: "first-shader.frag", hint: "обычный текстовый файл GLSL", programmable: true },
-  { name: "npm run shaders", hint: "сборка: .frag + fullscreen.vert → public/shaders/first-shader.wasm" },
-  { name: "loadShaderSources()", hint: "fetch + WebAssembly.instantiate → две строки GLSL" },
-  { name: "createProgram()", hint: "драйвер компилирует GLSL под эту видеокарту — прямо в браузере" },
-  { name: "requestAnimationFrame", hint: "uniform1f(u_time) + drawArrays → main() на каждый пиксель", programmable: true },
 ];
 
 export type TermItem = {
