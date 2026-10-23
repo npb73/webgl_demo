@@ -261,69 +261,6 @@
   gap: 0 $cell;
 }
 
-// --- Сколько это стоит: таблица замеров ------------------------------------
-
-.tableWrap {
-  margin-top: $cell * 1.25;
-  overflow-x: auto;
-}
-
-.table {
-  width: 100%;
-  min-width: 760px;
-  border-collapse: collapse;
-  font-size: $text-small;
-  line-height: $cell;
-
-  th,
-  td {
-    padding: ($cell * 0.25) 14px;
-    text-align: left;
-    vertical-align: top;
-    border-bottom: 1.5px solid tint(ink, 0.3);
-  }
-
-  td {
-    font-family: $font-code;
-    font-size: 18px;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
-
-  thead th {
-    font-family: $font-hand;
-    font-weight: 700;
-    font-size: 24px;
-    line-height: 28px;
-    color: $pencil;
-    border-bottom: 2px solid $ink;
-  }
-
-  tbody th {
-    font-family: $font-hand;
-    font-weight: 700;
-    font-size: 26px;
-    white-space: nowrap;
-  }
-}
-
-.tableCaption {
-  caption-side: bottom;
-  padding-top: $cell * 0.25;
-  font-family: $font-hand;
-  font-size: 22px;
-  text-align: left;
-  color: $pencil;
-}
-
-// Строка, где вся цена, — выделена маркером.
-.hot {
-  th,
-  td {
-    background: tint(marker, 0.27);
-  }
-}
-
 // Три статьи расходов рядом: трафик, оперативная память, видеопамять.
 .budgets {
   display: grid;

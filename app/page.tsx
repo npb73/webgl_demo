@@ -23,7 +23,7 @@ import {
 import { drawingRows, versusRows, type VersusRow } from "./content/canvas-vs-webgl";
 import { backdropDemos } from "./content/effects";
 import { overlayFisheyeMain, overlaySteps, type OverlayStep as OverlayStepData } from "./content/overlay";
-import { measuredOn, resourceBudgets, resourceRows } from "./content/resources";
+import { resourceBudgets } from "./content/resources";
 import { captureCode, captureNotes } from "./content/screenshot";
 import { libraries, reading } from "./content/links";
 import { milkdropDemos } from "./content/milkdrop";
@@ -379,40 +379,6 @@ export default function Home() {
             </Entry>
 
             <Entry {...entryProps("resources")}>
-              <Page>
-                <p className={styles.statement}>В покое — бесплатно. Дорог только снимок страницы.</p>
-                <p className={styles.lead}>
-                  Одни и те же действия в обычном DOM и в сцене HTML-in-Canvas. Главный поток — время
-                  всех задач вкладки, «наш код» — обработчик <code>paint</code> сцены.
-                </p>
-                <div className={styles.tableWrap}>
-                  <table className={styles.table}>
-                    <caption className={styles.tableCaption}>{measuredOn}</caption>
-                    <thead>
-                      <tr>
-                        <th scope="col">Что делаем</th>
-                        <th scope="col">Главный поток, DOM</th>
-                        <th scope="col">Главный поток, сцена</th>
-                        <th scope="col">Наш код на кадр</th>
-                        <th scope="col">Снимков в секунду</th>
-                        <th scope="col">Видеопамять сцены</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {resourceRows.map((row) => (
-                        <tr key={row.scenario} className={row.hot ? styles.hot : undefined}>
-                          <th scope="row">{row.scenario}</th>
-                          <td>{row.dom}</td>
-                          <td>{row.stage}</td>
-                          <td>{row.ourCode}</td>
-                          <td>{row.snapshots}</td>
-                          <td>{row.gpu}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </Page>
               <Page>
                 <div className={styles.budgets}>
                   {resourceBudgets.map((budget) => (

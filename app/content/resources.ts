@@ -1,34 +1,3 @@
-// Замер 2026-10-20: Chrome 155, MacBook Pro M3 Pro, окно 1440×757 CSS-пикселей,
-// ретина (DPR 2, буфер 2880×1514), страница 26 784 px в высоту. Каждый сценарий —
-// 4 секунды, два прогона, среднее. Скрипт замера — Chrome DevTools Protocol:
-// главный поток — Performance.getMetrics (TaskDuration), «наш код» и снимки —
-// счётчики сцены (getStats в stage-renderer.js). Тогда сайт был одной длинной
-// страницей: строка «Прокрутка» — замер той версии, после него сайт стал презентацией.
-export const measuredOn =
-  "Chrome 155, MacBook Pro M3 Pro, окно 1440×757, ретина (DPR 2). Каждый сценарий — 4 секунды, два прогона.";
-
-export type ResourceRow = {
-  scenario: string;
-  /** Главный поток вкладки в режиме обычного DOM, % времени. */
-  dom: string;
-  /** То же со сценой HTML-in-Canvas. */
-  stage: string;
-  /** Обработчик paint сцены на один кадр. */
-  ourCode: string;
-  snapshots: string;
-  gpu: string;
-  /** Строку стоит выделить — здесь вся цена. */
-  hot?: boolean;
-};
-
-export const resourceRows: ResourceRow[] = [
-  { scenario: "Покой", dom: "1,0 %", stage: "1,1 %", ourCode: "0 кадров", snapshots: "0", gpu: "33 МБ" },
-  { scenario: "Прокрутка длинной страницы", dom: "4,5 %", stage: "79 %", ourCode: "12,6 мс", snapshots: "60", gpu: "33 МБ", hot: true },
-  { scenario: "Тащить окно-линзу", dom: "5,3 %", stage: "3,7 %", ourCode: "0,24 мс", snapshots: "0", gpu: "70 МБ" },
-  { scenario: "Водить по карточке", dom: "8,6 %", stage: "6,5 %", ourCode: "0,25 мс", snapshots: "1", gpu: "56 МБ" },
-  { scenario: "Переход «куб»", dom: "—", stage: "6,6 %", ourCode: "0,58 мс", snapshots: "3", gpu: "97 МБ" },
-];
-
 export type ResourceItem = {
   name: string;
   value: string;
