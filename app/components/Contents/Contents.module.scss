@@ -3,13 +3,34 @@
 
 // Слайд «план»: оглавление по центру экрана.
 .contents {
-  display: flex;
-  flex-direction: column;
   justify-content: center;
-  min-height: 100vh;
-  min-height: 100svh;
-  max-width: 34em;
-  padding: $cell 0;
+  padding-top: $cell * 0.5;
+  padding-bottom: $cell * 0.5;
+}
+
+// Три части рассказа — три колонки; на узком экране друг под другом.
+.parts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9em, 1fr));
+  gap: $cell ($cell * 1.5);
+  max-width: 1280px;
+  margin-top: $cell * 0.5;
+  font-size: 28px;
+
+  @include mobile {
+    gap: $cell * 0.5;
+    font-size: 22px;
+  }
+}
+
+.partTitle {
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: 34px;
+  line-height: $cell * 1.25;
+  color: $pencil;
+  text-decoration: underline wavy tint(pencil, 0.5) 2px;
+  text-underline-offset: 8px;
 }
 
 .title {
@@ -21,12 +42,10 @@
 }
 
 .list {
-  margin-top: $cell * 0.5;
-  font-size: 32px;
-  line-height: $cell * 1.5;
+  margin-top: $cell * 0.25;
+  line-height: $cell * 1.25;
 
   @include mobile {
-    font-size: 22px;
     line-height: $cell;
   }
 }
@@ -41,7 +60,7 @@
   min-width: 1.4em;
   font-family: $font-hand;
   font-weight: 700;
-  font-size: 34px;
+  font-size: 1.1em;
   color: $red;
 }
 
@@ -53,5 +72,3 @@
     text-underline-offset: 6px;
   }
 }
-
-

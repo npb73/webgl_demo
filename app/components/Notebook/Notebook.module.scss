@@ -1,11 +1,11 @@
 @use "../../styles/tokens" as *;
 @use "../../styles/mixins" as *;
 
+// Поля листа — у слайдов (Slide.module.scss): тетрадь задаёт только ширину.
 .sheet {
   position: relative;
   max-width: 1240px;
   margin: 0 auto;
-  padding: 0 ($cell * 2) ($cell * 2) ($margin-width + $cell);
 
   // Красная линия полей, как в школьной тетради.
   &::before {
@@ -21,8 +21,6 @@
   }
 
   @include mobile {
-    padding: 0 16px ($cell * 2) ($cell + 16px);
-
     &::before {
       left: $cell * 0.5;
     }

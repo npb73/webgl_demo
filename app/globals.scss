@@ -31,21 +31,23 @@
   padding: 0;
 }
 
+// Презентация: документ не прокручивается, на экране один слайд.
 html {
-  scroll-behavior: smooth;
-  scroll-padding-top: $cell * 2;
   -webkit-text-size-adjust: 100%;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+// Иначе display у классов слайдов перебил бы атрибут hidden.
+[hidden] {
+  display: none !important;
 }
 
 body {
-  min-height: 100vh;
-  overflow-x: hidden;
   font-family: $font-body;
   font-size: $text;
   line-height: $cell;

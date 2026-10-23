@@ -37,6 +37,19 @@
     outline-offset: 5px;
   }
 
+  // Без HTML-in-Canvas некоторым демо нечего показать.
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: rotate(-1deg);
+    box-shadow: 3px 4px 0 tint(ink, 0.85);
+  }
+
+  // Выбранный вариант (переход на стрелках) обведён маркером.
+  &[aria-pressed="true"] {
+    background: $marker;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }

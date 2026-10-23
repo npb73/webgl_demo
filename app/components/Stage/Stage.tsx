@@ -9,6 +9,7 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from "react";
+import { setTransitionRunner } from "../../lib/page-transition";
 import { isHtmlInCanvasSupported } from "../../lib/webgl/html-in-canvas";
 import { createStageRenderer } from "./stage-renderer";
 import styles from "./Stage.module.scss";
@@ -42,28 +43,31 @@ export function Stage({ children }: { children: ReactNode }) {
 function CanvasStage({ children }: { children: ReactNode }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pageRef = useRef<HTMLDivElement>(null);
-  const spacerRef = useRef<HTMLDivElement>(null);
   const [renderer, setRenderer] = useState<StageRenderer | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const page = pageRef.current;
-    const spacer = spacerRef.current;
-    if (!canvas || !page || !spacer) return;
+    if (!canvas || !page) return;
 
     const controller = new AbortController();
     let created: StageRenderer | null = null;
 
-    createStageRenderer({ canvas, page, spacer, signal: controller.signal })
+    createStageRenderer({ canvas, page, signal: controller.signal })
       .then((stage) => {
         if (!stage) return;
-        if (controller.signal.aborted) stage.destroy();
-        else setRenderer((created = stage));
+        if (controller.signal.aborted) {
+          stage.destroy();
+          return;
+        }
+        setRenderer((created = stage));
+        setTransitionRunner(stage.transitionTo);
       })
       .catch((error: unknown) => console.error("Сцена WebGL не запустилась:", error));
 
     return () => {
       controller.abort();
+      if (created) setTransitionRunner(null);
       created?.destroy();
     };
   }, []);
@@ -76,8 +80,6 @@ function CanvasStage({ children }: { children: ReactNode }) {
           {children}
         </div>
       </canvas>
-      {/* Canvas прибит к экрану, а прокрутку документу даёт этот блок высотой со страницу. */}
-      <div ref={spacerRef} className={styles.spacer} aria-hidden="true" />
     </StageContext.Provider>
   );
 }

@@ -36,3 +36,78 @@
     line-height: 20px;
   }
 }
+
+// --- Строки и подсказки к ним -----------------------------------------------
+
+.line {
+  display: block;
+  // Подсветка тянется на всю ширину, даже если строка длиннее листка.
+  width: fit-content;
+  min-width: 100%;
+}
+
+.annotated {
+  cursor: help;
+  border-radius: 4px;
+
+  &:hover,
+  &.active {
+    background: tint(marker, 0.35);
+  }
+
+  &:focus-visible {
+    outline: 2px dashed $red;
+    outline-offset: 1px;
+  }
+}
+
+// Бумажка над строкой: стрелка указывает на начало кода.
+.tip {
+  position: absolute;
+  z-index: 5;
+  width: max-content;
+  max-width: min(420px, 100%);
+  padding: 10px 16px 12px;
+  font-family: $font-body;
+  font-size: 20px;
+  line-height: 28px;
+  color: $ink;
+  background: $paper;
+  border: 2px solid tint(ink, 0.55);
+  border-radius: 14px 6px 12px 8px / 8px 12px 6px 14px;
+  box-shadow: 4px 6px 14px -6px tint(ink, 0.35);
+  pointer-events: none;
+  transform: translateY(calc(-100% - 12px)) rotate(-0.6deg);
+  transform-origin: var(--arrow) 100%;
+  animation: tip-in 0.14s ease-out;
+
+  // Хвостик бумажки: квадрат с той же рамкой, повёрнутый на 45°.
+  &::after {
+    content: "";
+    position: absolute;
+    left: var(--arrow);
+    bottom: -8px;
+    width: 14px;
+    height: 14px;
+    background: $paper;
+    border-right: 2px solid tint(ink, 0.55);
+    border-bottom: 2px solid tint(ink, 0.55);
+    transform: translateX(-50%) rotate(45deg);
+  }
+
+  @include mobile {
+    font-size: 16px;
+    line-height: 22px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes tip-in {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-100% - 6px)) rotate(-0.6deg) scale(0.96);
+  }
+}

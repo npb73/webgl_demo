@@ -1,0 +1,28 @@
+@use "../../styles/tokens" as *;
+@use "../../styles/mixins" as *;
+
+// Слайд — ровно экран. Поля листа тоже здесь, а не у тетради: так тени
+// и скотч у краёв содержимого не обрезает overflow слайда.
+.slide {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  padding: 0 ($cell * 2) 0 ($margin-width + $cell);
+
+  // На телефоне вёрстка слайда выше экрана — читаем прокруткой.
+  @include mobile {
+    overflow-y: auto;
+    padding: 0 16px 0 ($cell + 16px);
+  }
+}
+
+// Даже уменьшенное содержимое не влезает — пусть прокручивается.
+.scroll {
+  overflow-y: auto;
+}
+
+.fit {
+  flex: none;
+}

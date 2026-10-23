@@ -1,0 +1,59 @@
+@use "../../styles/tokens" as *;
+@use "../../styles/mixins" as *;
+
+// Монитор — листок из блокнота, приклеенный скотчем.
+.monitor {
+  position: relative;
+  max-width: 520px;
+  margin: ($cell * 1.25) 0 $cell;
+  padding: ($cell * 0.75) $cell ($cell * 0.5);
+  background: $sticky;
+  box-shadow:
+    0 1px 1px $sticky-shadow,
+    6px 8px 14px -8px $sticky-shadow;
+  transform: rotate(-0.6deg);
+  @include tape;
+}
+
+.title {
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: $cell;
+  color: $red;
+}
+
+.rows {
+  margin-top: $cell * 0.25;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: $cell * 0.5;
+  font-size: $text-small;
+  line-height: $cell;
+  border-bottom: 1px dashed tint(ink, 0.25);
+}
+
+// Цифры моноширинные: при обновлении строка не прыгает.
+.value {
+  font-family: $font-code;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.wait,
+.hint {
+  font-family: $font-hand;
+  font-size: 22px;
+  line-height: $cell;
+  color: $pencil;
+}
+
+.off {
+  max-width: 34em;
+  margin-top: $cell * 0.5;
+  font-size: $text-small;
+  color: $pencil;
+}

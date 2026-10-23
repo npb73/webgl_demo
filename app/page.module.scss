@@ -29,80 +29,6 @@
   }
 }
 
-// CPU против GPU: две карточки-стикера рядом.
-.versus {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: $cell;
-  max-width: 900px;
-  margin-top: $cell * 1.5;
-}
-
-.card {
-  padding: ($cell * 0.5) $cell ($cell * 0.75);
-  background: $sticky;
-  box-shadow:
-    0 1px 1px $sticky-shadow,
-    6px 8px 14px -8px $sticky-shadow;
-  transform: rotate(-1deg);
-
-  & + & {
-    transform: rotate(1.2deg);
-  }
-}
-
-.cardTitle {
-  font-family: $font-hand;
-  font-weight: 700;
-  font-size: 44px;
-  line-height: $cell * 1.5;
-  color: $red;
-}
-
-// --- Сравнение технологий ---------------------------------------------------
-
-.tableWrap {
-  clear: both;
-  margin-top: $cell * 1.5;
-  overflow-x: auto;
-}
-
-.table {
-  width: 100%;
-  min-width: 560px;
-  border-collapse: collapse;
-
-  th,
-  td {
-    padding: ($cell * 0.25) 14px;
-    text-align: left;
-    vertical-align: top;
-    border-bottom: 1.5px solid tint(ink, 0.3);
-  }
-
-  thead th {
-    font-family: $font-hand;
-    font-weight: 700;
-    font-size: 28px;
-    color: $pencil;
-    border-bottom: 2px solid $ink;
-  }
-
-  tbody th {
-    font-family: $font-hand;
-    font-weight: 700;
-    font-size: 32px;
-    white-space: nowrap;
-  }
-}
-
-.current {
-  th,
-  td {
-    background: tint(marker, 0.27);
-  }
-}
-
 // --- Словарь через знакомые фронтендеру вещи ---------------------------------
 
 .glossary {
@@ -111,7 +37,7 @@
 
 .glossaryItem {
   display: grid;
-  grid-template-columns: 7em 1fr;
+  grid-template-columns: 12em 1fr;
   gap: 0 $cell * 0.5;
 
   & + & {
@@ -130,7 +56,12 @@
   }
 }
 
-// --- Рецепт: шаг, подсказка, одна ключевая строка кода ----------------------
+.glossaryJs {
+  display: block;
+  font-size: 18px;
+}
+
+// --- Рецепт: шаг и одна ключевая строка кода ------------------------------
 
 .recipe {
   margin-top: $cell;
@@ -168,13 +99,6 @@
   line-height: $cell * 1.25;
 }
 
-.recipeHint {
-  font-family: $font-body;
-  font-weight: 400;
-  font-size: $text-small;
-  color: $pencil;
-}
-
 .recipeCode {
   display: inline-block;
   margin-top: 4px;
@@ -190,62 +114,88 @@
   }
 }
 
-// --- Формула на стикере -----------------------------------------------------
+// В шаге может лежать листок с кодом: без min-width длинная строка
+// растянула бы колонку грида, а не прокрутила бы код.
+.recipeBody {
+  min-width: 0;
+}
 
-.formula {
-  display: inline-block;
-  max-width: 100%;
-  margin-top: $cell * 1.25;
-  padding: ($cell * 0.5) $cell;
-  background: $sticky;
-  box-shadow:
-    0 1px 1px $sticky-shadow,
-    6px 8px 14px -8px $sticky-shadow;
-  transform: rotate(-0.8deg);
+.recipeText {
+  max-width: 40em;
+  margin-top: $cell * 0.25;
+  font-size: $text-small;
+  line-height: $cell * 0.875;
+  color: $ink-soft;
 
-  code {
-    font-size: 28px;
-    white-space: normal;
-    background: none;
-    padding: 0;
-
-    @include mobile {
-      font-size: 18px;
-    }
-  }
-
-  figcaption {
-    margin-top: 6px;
-    font-family: $font-hand;
-    font-size: 26px;
-    color: $pencil;
+  @include mobile {
+    font-size: 16px;
+    line-height: 24px;
   }
 }
 
-// --- Эффекты окон -----------------------------------------------------------
+// --- Пара шейдеров: .vert и .frag рядом -------------------------------------
 
-.effects {
+// Колонок всегда две: слайд, уменьшенный под экран, не должен
+// перестраиваться в три — от этого он стал бы только выше.
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $cell;
   margin-top: $cell;
-}
 
-.effect {
-  position: relative;
-  padding-left: $cell;
-
-  &::before {
-    content: "→";
-    position: absolute;
-    left: 0;
-    font-family: $font-hand;
-    font-weight: 700;
-    color: $red;
+  @include mobile {
+    grid-template-columns: 1fr;
   }
 }
 
-.effectName {
+// Карточка обведена красным, как программируемые этапы на схеме конвейера.
+.half {
+  padding: ($cell * 0.5) $cell ($cell * 0.75);
+  background: tint(paper, 0.85);
+  border: 2.5px solid $red;
+  border-radius: 14px 6px 12px 8px / 8px 12px 6px 14px;
+
+  &:nth-child(odd) {
+    transform: rotate(-0.4deg);
+  }
+
+  &:nth-child(even) {
+    transform: rotate(0.4deg);
+  }
+}
+
+.halfTitle {
   font-family: $font-hand;
   font-weight: 700;
-  font-size: 34px;
+  font-size: 36px;
+  line-height: $cell * 1.25;
+}
+
+.halfFacts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 14px;
+  margin: ($cell * 0.25) 0 ($cell * 0.5);
+
+  dt {
+    font-family: $font-hand;
+    font-size: $text-small;
+    color: $pencil;
+  }
+
+  dd {
+    min-width: 0;
+  }
+}
+
+// Рисунок карандашом прямо на листе: прозрачный PNG поверх клетки,
+// на всю ширину карточки, без рамки.
+.halfImage {
+  display: block;
+  width: calc(100% + #{$cell});
+  max-width: none;
+  height: auto;
+  margin: 0 ($cell * -0.5) ($cell * 0.5);
 }
 
 // --- Кнопки демо ------------------------------------------------------------
@@ -264,13 +214,105 @@
   gap: 0 $cell;
 }
 
+// --- Сколько это стоит: таблица замеров ------------------------------------
 
+.tableWrap {
+  margin-top: $cell * 1.25;
+  overflow-x: auto;
+}
 
-// --- Грабли -----------------------------------------------------------------
+.table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  font-size: $text-small;
+  line-height: $cell;
 
+  th,
+  td {
+    padding: ($cell * 0.25) 14px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1.5px solid tint(ink, 0.3);
+  }
+
+  td {
+    font-family: $font-code;
+    font-size: 18px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  thead th {
+    font-family: $font-hand;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 28px;
+    color: $pencil;
+    border-bottom: 2px solid $ink;
+  }
+
+  tbody th {
+    font-family: $font-hand;
+    font-weight: 700;
+    font-size: 26px;
+    white-space: nowrap;
+  }
+}
+
+.tableCaption {
+  caption-side: bottom;
+  padding-top: $cell * 0.25;
+  font-family: $font-hand;
+  font-size: 22px;
+  text-align: left;
+  color: $pencil;
+}
+
+// Строка, где вся цена, — выделена маркером.
+.hot {
+  th,
+  td {
+    background: tint(marker, 0.27);
+  }
+}
+
+.extras {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 $cell;
+  margin-top: $cell;
+
+  @include mobile {
+    grid-template-columns: 1fr;
+  }
+}
+
+.extra {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: $text-small;
+  line-height: $cell;
+  border-bottom: 1px dashed tint(ink, 0.25);
+
+  dt {
+    font-family: $font-hand;
+    font-weight: 700;
+    font-size: 24px;
+  }
+
+  dd {
+    text-align: right;
+  }
+}
+
+// --- Слабые места -----------------------------------------------------------
+
+// Две колонки, как у .pair: уменьшенный слайд не перестраивается.
 .pitfalls {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-template-columns: 1fr 1fr;
   gap: $cell;
   margin-top: $cell * 1.5;
 
@@ -301,11 +343,47 @@
   }
 }
 
+// Правило, а не предупреждение: галочка карандашом вместо красного «!».
+.practice::before {
+  content: "✓";
+  color: $ink;
+  border-color: $ink;
+}
+
 .pitfallTitle {
   font-family: $font-hand;
   font-weight: 700;
   font-size: 36px;
   line-height: $cell * 1.25;
+}
+
+.pitfallFix {
+  margin-top: $cell * 0.25;
+}
+
+.pitfallFixLabel {
+  font-family: $font-hand;
+  font-weight: 700;
+  color: $red;
+}
+
+// Пример — маленький листок кода, переносы строк как в исходнике.
+.pitfallCode {
+  display: block;
+  margin-top: $cell * 0.25;
+  padding: 6px 12px;
+  font-size: 17px;
+  line-height: 26px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: $code-bg;
+  border: 1px solid tint(ink, 0.15);
+  box-shadow: 3px 4px 0 -1px tint(ink, 0.06);
+
+  @include mobile {
+    font-size: 13px;
+    line-height: 20px;
+  }
 }
 
 // --- Библиотеки -------------------------------------------------------------
@@ -333,13 +411,6 @@
   font-family: $font-hand;
   font-weight: 700;
   font-size: 36px;
-}
-
-.aside {
-  margin-top: $cell * 1.5;
-  font-family: $font-hand;
-  font-size: 32px;
-  color: $pencil;
 }
 
 // --- Что почитать: список с нарисованными чекбоксами ------------------------

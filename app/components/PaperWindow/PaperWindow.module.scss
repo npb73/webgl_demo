@@ -10,7 +10,8 @@
   top: 0;
   left: 0;
   z-index: 1000;
-  width: min(560px, calc(100vw - 32px));
+  // Ширину и высоту задаёт окно (см. defaultSize в PaperWindow.tsx).
+  width: min(1120px, calc(100vw - 32px));
   filter: drop-shadow(0 2px 2px tint(shadow, 0.18))
     drop-shadow(10px 16px 18px tint(shadow, 0.16));
   will-change: transform;
@@ -36,8 +37,10 @@
   }
 
   // Плоское окно: содержимое должно совпадать с пикселями страницы под ним.
+  // Развёрнутое — ровно по краям экрана.
   .flat &,
-  .flat.dragging & {
+  .flat.dragging &,
+  .maximized & {
     transform: none;
   }
 
@@ -122,6 +125,64 @@
   }
 }
 
+// «Развернуть» — та же форма, что у крестика, но карандашом по бумаге.
+.maximize {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 26px;
+  padding: 0;
+  border: 2px solid $ink;
+  border-radius: 4px 6px 3px 5px;
+  color: $ink;
+  background: $paper;
+  cursor: pointer;
+
+  &:hover {
+    transform: rotate(4deg);
+  }
+
+  &:focus-visible {
+    outline: 2px dashed $red;
+    outline-offset: 2px;
+  }
+}
+
+// Значок «развернуть»: рамка окна с толстым заголовком.
+.maximizeIcon {
+  width: 14px;
+  height: 11px;
+  border: 2px solid currentColor;
+  border-top-width: 4px;
+  border-radius: 1px;
+}
+
+// Значок «вернуть»: два окна внахлёст. Сам элемент — заднее окно,
+// ::after — переднее, с бумажной заливкой поверх него.
+.restoreIcon {
+  position: relative;
+  width: 11px;
+  height: 9px;
+  margin: 0 0 4px 6px;
+  border: 2px solid currentColor;
+  border-top-width: 3px;
+  border-radius: 1px;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: -7px;
+    width: 11px;
+    height: 9px;
+    border: 2px solid currentColor;
+    border-top-width: 3px;
+    border-radius: 1px;
+    background: $paper;
+  }
+}
+
 .content {
   margin-top: 8px;
 }
@@ -158,8 +219,8 @@
 }
 
 // --- Изменение размера ------------------------------------------------------
-// Окну задали размер: лист тянется на всю высоту, а картинка — на остаток
-// под заголовком, без фиксированных пропорций 4:3.
+// Размер у окна есть всегда: лист тянется на всю высоту, а картинка — на
+// остаток под заголовком, без фиксированных пропорций 4:3.
 .sized {
   .paper {
     display: flex;

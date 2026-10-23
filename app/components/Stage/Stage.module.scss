@@ -1,6 +1,6 @@
 @use "../../styles/tokens" as *;
 
-// Canvas занимает экран и не прокручивается: прокрутку изображает сцена.
+// Canvas занимает экран: на нём всегда ровно один слайд.
 .canvas {
   position: fixed;
   inset: 0;
@@ -11,16 +11,14 @@
 }
 
 // Та же бумага в клетку, что у body: страница внутри canvas рисуется
-// в текстуру целиком, вместе со своим фоном.
+// в текстуру целиком, вместе со своим фоном. Высота — экран: виден
+// один слайд, и снимок страницы — ровно то, что на экране.
 .page {
   width: 100%;
+  height: 100vh;
   background-color: $paper;
   background-image:
     linear-gradient($grid-line 1px, transparent 1px),
     linear-gradient(90deg, $grid-line 1px, transparent 1px);
   background-size: $cell $cell;
-}
-
-.spacer {
-  pointer-events: none;
 }

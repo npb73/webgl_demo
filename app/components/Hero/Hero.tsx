@@ -1,8 +1,10 @@
+import { Slide } from "../Slide/Slide";
 import styles from "./Hero.module.scss";
 
 export function Hero() {
   return (
-    <header className={styles.hero} data-slide>
+    // id — FIRST_SLIDE из lib/deck: с титула презентация открывается.
+    <Slide id="title" as="header" className={styles.hero}>
       <p className={styles.kicker}>Тетрадь № 1 · фронтенд → GPU</p>
 
       <h1 className={styles.title}>
@@ -10,8 +12,8 @@ export function Hero() {
       </h1>
 
       <p className={styles.lead}>
-        Как рисовать прямо на видеокарте — для тех, кто знает React,
-        но ни разу не писал шейдер.
+        Разбираем код: от <code>getContext(&quot;webgl2&quot;)</code> до шейдеров
+        поверх DOM.
       </p>
 
       <dl className={styles.meta}>
@@ -20,6 +22,6 @@ export function Hero() {
           <dd>фронтендер, которому стало любопытно</dd>
         </div>
       </dl>
-    </header>
+    </Slide>
   );
 }

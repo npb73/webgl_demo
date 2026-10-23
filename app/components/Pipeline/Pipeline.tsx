@@ -8,9 +8,13 @@ export type PipelineStage = {
 
 type PipelineProps = {
   stages: PipelineStage[];
+  caption?: string;
 };
 
-export function Pipeline({ stages }: PipelineProps) {
+export function Pipeline({
+  stages,
+  caption = "обведено красным — то, что пишете вы; остальное делает GPU",
+}: PipelineProps) {
   return (
     <figure className={styles.pipeline}>
       <ol className={styles.stages}>
@@ -24,9 +28,7 @@ export function Pipeline({ stages }: PipelineProps) {
           </li>
         ))}
       </ol>
-      <figcaption className={styles.caption}>
-        обведено красным — то, что пишете вы; остальное делает GPU
-      </figcaption>
+      <figcaption className={styles.caption}>{caption}</figcaption>
     </figure>
   );
 }

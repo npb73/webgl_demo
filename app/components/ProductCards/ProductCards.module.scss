@@ -1,0 +1,176 @@
+@use "../../styles/tokens" as *;
+@use "../../styles/mixins" as *;
+
+// Три крупные карточки в ряд, на узком экране — одна под другой.
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $cell;
+  max-width: 1000px;
+  margin-top: $cell * 1.25;
+  padding: 0;
+  list-style: none;
+
+  @media (max-width: 900px) {
+    grid-template-columns: minmax(0, 340px);
+  }
+}
+
+// Пропорции коллекционной карточки: 5 × 7.
+.slot {
+  aspect-ratio: 5 / 7;
+}
+
+// Место карточки в вёрстке: пустое, саму карточку рисует сцена.
+.anchor {
+  width: 100%;
+  height: 100%;
+}
+
+// Слой сцены внутри canvas: размер задаёт место в сетке (см. StageCard).
+.stageCard {
+  position: relative;
+}
+
+// Без HTML-in-Canvas — наклон CSS-трансформацией, без шейдеров.
+.domCard {
+  height: 100%;
+  transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) scale(var(--lift, 1));
+  transition: transform 0.15s ease-out;
+
+  @media (prefers-reduced-motion: reduce) {
+    transform: none;
+    transition: none;
+  }
+}
+
+// --- Сама карточка ----------------------------------------------------------
+// Радиус — как RADIUS в product-card.frag: по нему рисуется тень.
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  padding: 16px 16px 12px;
+  font-family: $font-body;
+  color: #1f2a5c;
+  border: 3px solid #1f2a5c;
+  border-radius: 18px;
+}
+
+.pearl {
+  background: linear-gradient(160deg, #fdfbff, #e6e0ff);
+}
+
+.ice {
+  background: linear-gradient(160deg, #f1fbff, #cde8ff);
+}
+
+// Золотой фольге нужна тёмная карточка: металлом становятся светлые буквы.
+.night {
+  color: #f4e7c4;
+  background: linear-gradient(160deg, #16182e, #2b2148);
+  border-color: #f4e7c4;
+
+  .art {
+    background: radial-gradient(circle at 50% 40%, rgb(255 255 255 / 0.14), transparent 70%);
+    border-color: rgb(244 231 196 / 0.6);
+  }
+
+  .buy {
+    color: #16182e;
+    background: #f4e7c4;
+    border-color: #f4e7c4;
+  }
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.badge {
+  padding: 0 8px;
+  font-family: $font-hand;
+  font-weight: 700;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+}
+
+.art {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  background: radial-gradient(circle at 50% 40%, #ffffff, rgb(255 255 255 / 0.2) 70%);
+  border: 1.5px solid rgb(31 42 92 / 0.35);
+  border-radius: 12px;
+}
+
+.emoji {
+  font-size: 120px;
+  line-height: 1;
+  filter: drop-shadow(0 8px 10px rgb(0 0 0 / 0.18));
+}
+
+.name {
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: 32px;
+  line-height: 34px;
+}
+
+.description {
+  font-size: 16px;
+  line-height: 22px;
+  opacity: 0.85;
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 20px;
+  line-height: 26px;
+}
+
+.price {
+  font-weight: 700;
+}
+
+.buy {
+  padding: 6px 12px;
+  font-family: $font-hand;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 30px;
+  color: #1f2a5c;
+  background: #fff7c2;
+  border: 2px solid #1f2a5c;
+  border-radius: 10px;
+  cursor: pointer;
+
+  &:hover {
+    background: #ffe86b;
+  }
+
+  &:focus-visible {
+    outline: 2px dashed $red;
+    outline-offset: 3px;
+  }
+}
+
+// Коллекционный номер внизу, как на настоящей карточке.
+.number {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 6px;
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: 0.04em;
+  border-top: 1px solid currentColor;
+  opacity: 0.7;
+}

@@ -48,8 +48,9 @@ const VIEWPORT_GUTTER = 16;
 // Сколько окна должно оставаться на экране, чтобы его можно было вернуть.
 const VISIBLE_PART = 96;
 const TITLE_BAR_HEIGHT = 48;
-const DEFAULT_WIDTH = 560;
-const DEFAULT_HEIGHT = 480;
+// Новое окно — 1120×960, но не больше экрана с полями.
+const DEFAULT_WIDTH = 1120;
+const DEFAULT_HEIGHT = 960;
 // Меньше — не помещаются заголовок и хоть какая-то картинка.
 const MIN_WIDTH = 280;
 const MIN_HEIGHT = 240;
@@ -60,13 +61,23 @@ const KEY_STEP = 16;
 let topZIndex = 1000;
 const nextZIndex = () => ++topZIndex;
 
-function initialPosition(): Position {
-  const width = Math.min(DEFAULT_WIDTH, window.innerWidth - VIEWPORT_GUTTER * 2);
+function defaultSize(): Size {
   return {
-    x: Math.round((window.innerWidth - width) / 2),
-    y: Math.max(VIEWPORT_GUTTER, Math.round((window.innerHeight - DEFAULT_HEIGHT) / 2)),
+    width: Math.max(MIN_WIDTH, Math.min(DEFAULT_WIDTH, window.innerWidth - VIEWPORT_GUTTER * 2)),
+    height: Math.max(MIN_HEIGHT, Math.min(DEFAULT_HEIGHT, window.innerHeight - VIEWPORT_GUTTER * 2)),
   };
 }
+
+/** Новое окно — по центру экрана. */
+function initialPosition(): Position {
+  const { width, height } = defaultSize();
+  return {
+    x: Math.round((window.innerWidth - width) / 2),
+    y: Math.max(0, Math.round((window.innerHeight - height) / 2)),
+  };
+}
+
+const fullScreen = (): Size => ({ width: window.innerWidth, height: window.innerHeight });
 
 function clampPosition({ x, y }: Position, width: number): Position {
   return {
@@ -84,20 +95,44 @@ function clampSize({ width, height }: Size): Size {
 
 const classNames = (...names: (string | false | undefined)[]) => names.filter(Boolean).join(" ");
 
-/**
- * Размер окна, который тянут за уголок или меняют стрелками.
- * null — размер по умолчанию из CSS (ширина 560, картинка 4:3).
- */
-function useResizable(windowRef: RefObject<HTMLDivElement | null>) {
-  const [size, setSize] = useState<Size | null>(null);
-  const [resizing, setResizing] = useState(false);
-  const start = useRef<{ x: number; y: number; size: Size } | null>(null);
+type Placement = {
+  getPosition: () => Position;
+  moveTo: (position: Position) => void;
+};
 
-  const currentSize = (): Size =>
-    size ?? {
-      width: windowRef.current?.offsetWidth ?? DEFAULT_WIDTH,
-      height: windowRef.current?.offsetHeight ?? DEFAULT_HEIGHT,
-    };
+/**
+ * Размер окна: тянут за уголок, меняют стрелками или разворачивают на
+ * весь экран. Развёрнутое окно помнит, где было, и возвращается туда;
+ * перетаскивание или новый размер просто снимают этот режим.
+ */
+function useWindowSize({ getPosition, moveTo }: Placement) {
+  const [size, setSize] = useState<Size>(defaultSize);
+  const [resizing, setResizing] = useState(false);
+  const [restore, setRestore] = useState<{ position: Position; size: Size } | null>(null);
+  const start = useRef<{ x: number; y: number; size: Size } | null>(null);
+  const maximized = restore !== null;
+
+  // Развёрнутое окно следует за размером экрана.
+  useEffect(() => {
+    if (!maximized) return;
+    const onResize = () => setSize(fullScreen());
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [maximized]);
+
+  const toggleMaximized = () => {
+    if (restore) {
+      setSize(restore.size);
+      moveTo(restore.position);
+      setRestore(null);
+      return;
+    }
+    setRestore({ position: getPosition(), size });
+    setSize(fullScreen());
+    moveTo({ x: 0, y: 0 });
+  };
+
+  const release = () => setRestore(null);
 
   const resizeTo = (event: ReactPointerEvent<HTMLButtonElement>) => {
     const from = start.current;
@@ -114,7 +149,8 @@ function useResizable(windowRef: RefObject<HTMLDivElement | null>) {
     onPointerDown(event: ReactPointerEvent<HTMLButtonElement>) {
       if (event.button !== 0) return;
       event.currentTarget.setPointerCapture(event.pointerId);
-      start.current = { x: event.clientX, y: event.clientY, size: currentSize() };
+      start.current = { x: event.clientX, y: event.clientY, size };
+      release();
       setResizing(true);
     },
     onPointerMove: resizeTo,
@@ -134,16 +170,15 @@ function useResizable(windowRef: RefObject<HTMLDivElement | null>) {
       }[event.key];
       if (!delta) return;
       event.preventDefault();
-      const { width, height } = currentSize();
-      setSize(clampSize({ width: width + delta[0], height: height + delta[1] }));
+      release();
+      setSize(clampSize({ width: size.width + delta[0], height: size.height + delta[1] }));
     },
   };
 
-  const sizeStyle = size ? { width: size.width, height: size.height } : undefined;
-  return { sized: size !== null, resizing, sizeStyle, gripProps };
+  return { size, resizing, maximized, toggleMaximized, release, gripProps };
 }
 
-type GripProps = ReturnType<typeof useResizable>["gripProps"];
+type GripProps = ReturnType<typeof useWindowSize>["gripProps"];
 
 /** Уголок для изменения размера, как в Windows, только нарисованный карандашом. */
 function ResizeGrip(props: GripProps) {
@@ -171,14 +206,28 @@ type ChromeProps = {
   title: string;
   closeRef: RefObject<HTMLButtonElement | null>;
   onClose: () => void;
+  maximized: boolean;
+  onToggleMaximized: () => void;
   onPointerDown: (event: ReactPointerEvent<HTMLDivElement>) => void;
   onPointerMove: (event: ReactPointerEvent<HTMLDivElement>) => void;
   onPointerUp: (event: ReactPointerEvent<HTMLDivElement>) => void;
   children: ReactNode;
 };
 
-/** Бумажный лист: заголовок «как в Windows», крестик и область содержимого. */
-function WindowChrome({ titleId, title, closeRef, onClose, onPointerDown, onPointerMove, onPointerUp, children }: ChromeProps) {
+/** Бумажный лист: заголовок «как в Windows», кнопки окна и область содержимого. */
+function WindowChrome({
+  titleId,
+  title,
+  closeRef,
+  onClose,
+  maximized,
+  onToggleMaximized,
+  onPointerDown,
+  onPointerMove,
+  onPointerUp,
+  children,
+}: ChromeProps) {
+  const maximizeLabel = maximized ? "Вернуть прежний размер" : "Развернуть на весь экран";
   return (
     <div className={styles.paper}>
       <div
@@ -188,11 +237,24 @@ function WindowChrome({ titleId, title, closeRef, onClose, onPointerDown, onPoin
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
         onLostPointerCapture={onPointerUp}
+        // Как в Windows: двойной клик по заголовку разворачивает окно.
+        onDoubleClick={(event) => {
+          if (!(event.target as HTMLElement).closest("button")) onToggleMaximized();
+        }}
       >
         <span className={styles.icon} aria-hidden="true" />
         <h2 id={titleId} className={styles.title}>
           {title}
         </h2>
+        <button
+          type="button"
+          className={styles.maximize}
+          onClick={onToggleMaximized}
+          aria-label={maximizeLabel}
+          title={maximizeLabel}
+        >
+          <span className={maximized ? styles.restoreIcon : styles.maximizeIcon} aria-hidden="true" />
+        </button>
         <button ref={closeRef} type="button" className={styles.close} onClick={onClose} aria-label="Закрыть окно">
           ✕
         </button>
@@ -214,7 +276,10 @@ function DomWindow({ title, flat = false, onClose, children }: PaperWindowProps)
   const [position, setPosition] = useState(initialPosition);
   const [dragging, setDragging] = useState(false);
   const [zIndex, setZIndex] = useState(nextZIndex);
-  const { sized, resizing, sizeStyle, gripProps } = useResizable(windowRef);
+  const { size, resizing, maximized, toggleMaximized, release, gripProps } = useWindowSize({
+    getPosition: () => position,
+    moveTo: setPosition,
+  });
 
   useEffect(() => {
     closeRef.current?.focus();
@@ -223,6 +288,7 @@ function DomWindow({ title, flat = false, onClose, children }: PaperWindowProps)
   const onPointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
     if (!isDragStart(event)) return;
     event.currentTarget.setPointerCapture(event.pointerId);
+    release();
     dragOffset.current = { x: event.clientX - position.x, y: event.clientY - position.y };
     setDragging(true);
   };
@@ -233,7 +299,7 @@ function DomWindow({ title, flat = false, onClose, children }: PaperWindowProps)
     setPosition(
       clampPosition(
         { x: event.clientX - offset.x, y: event.clientY - offset.y },
-        windowRef.current?.offsetWidth ?? DEFAULT_WIDTH,
+        size.width,
       ),
     );
   };
@@ -258,12 +324,13 @@ function DomWindow({ title, flat = false, onClose, children }: PaperWindowProps)
       aria-labelledby={titleId}
       className={classNames(
         styles.window,
+        styles.sized,
         flat && styles.flat,
+        maximized && styles.maximized,
         dragging && styles.dragging,
-        sized && styles.sized,
         resizing && styles.resizing,
       )}
-      style={{ transform: `translate(${position.x}px, ${position.y}px)`, zIndex, ...sizeStyle }}
+      style={{ transform: `translate(${position.x}px, ${position.y}px)`, zIndex, ...size }}
       onPointerDownCapture={() => {
         if (zIndex !== topZIndex) setZIndex(nextZIndex());
       }}
@@ -276,6 +343,8 @@ function DomWindow({ title, flat = false, onClose, children }: PaperWindowProps)
         title={title}
         closeRef={closeRef}
         onClose={onClose}
+        maximized={maximized}
+        onToggleMaximized={toggleMaximized}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={stopDragging}
@@ -313,7 +382,15 @@ function StageWindow({
   const [dragging, setDragging] = useState(false);
   // Новый размер меняет вёрстку окна — браузер перерисует рамку,
   // и сцена сама заберёт её новую текстуру и размеры содержимого.
-  const { sized, resizing, sizeStyle, gripProps } = useResizable(windowRef);
+  const { size, resizing, maximized, toggleMaximized, release, gripProps } = useWindowSize({
+    getPosition: () => handleRef.current?.position ?? initialPosition(),
+    moveTo: ({ x, y }) => handleRef.current?.moveTo(x, y),
+  });
+
+  // Развёрнутое окно сцена не наклоняет: оно встаёт ровно по краям экрана.
+  useEffect(() => {
+    handleRef.current?.setMaximized(maximized);
+  }, [maximized]);
 
   useEffect(() => {
     const shell = shellRef.current;
@@ -343,6 +420,7 @@ function StageWindow({
     const handle = handleRef.current;
     if (!handle || !isDragStart(event)) return;
     event.currentTarget.setPointerCapture(event.pointerId);
+    release();
     const { x, y } = handle.position;
     dragOffset.current = { x: event.clientX - x, y: event.clientY - y };
     handle.setDragging(true);
@@ -354,7 +432,7 @@ function StageWindow({
     if (!offset) return;
     const { x, y } = clampPosition(
       { x: event.clientX - offset.x, y: event.clientY - offset.y },
-      windowRef.current?.offsetWidth ?? DEFAULT_WIDTH,
+      size.width,
     );
     handleRef.current?.moveTo(x, y);
   };
@@ -380,11 +458,11 @@ function StageWindow({
         className={classNames(
           styles.window,
           styles.staged,
+          styles.sized,
           dragging && styles.dragging,
-          sized && styles.sized,
           resizing && styles.resizing,
         )}
-        style={sizeStyle}
+        style={size}
         onPointerDownCapture={() => handleRef.current?.raise()}
         onKeyDown={(event) => {
           if (event.key === "Escape") onClose();
@@ -395,6 +473,8 @@ function StageWindow({
           title={title}
           closeRef={closeRef}
           onClose={onClose}
+          maximized={maximized}
+          onToggleMaximized={toggleMaximized}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={stopDragging}
